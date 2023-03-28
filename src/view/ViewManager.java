@@ -26,6 +26,7 @@ public class ViewManager {
     }
 
     private void createBackground() {
+        // test comment
         Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         mainPane.setBackground(new Background(background));
