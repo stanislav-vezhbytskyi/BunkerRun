@@ -52,7 +52,7 @@ public class BunkerRunButton extends Button {
         setLayoutY(getLayoutY() + 4);
     }
 
-    private void setButtonReleasedStyle() {
+    public void setButtonReleasedStyle() {
         setStyle(BUTTON_FREE_STYLE);
         setPrefHeight(65);
         setLayoutY(getLayoutY() - 4);
