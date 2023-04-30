@@ -39,12 +39,11 @@ public class ViewManager {
         mainStage.setScene(aScene);
     }
 
-    private void switchToMainMenu() {
+    public void switchToMainMenu() {
         mainStage.setScene(mainMenu.getScene());
     }
 
     public Stage getMainStage() {
         return mainStage;
     }
-
 }
