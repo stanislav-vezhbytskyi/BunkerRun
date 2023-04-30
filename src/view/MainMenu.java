@@ -7,15 +7,19 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import model.BunkerRunButton;
+import model.BackgroundMusic;
 
 import static view.ViewManager.HEIGHT;
 import static view.ViewManager.WIDTH;
 
 public class MainMenu {
+    //private BackgroundMusic mainTheme = new BackgroundMusic("src/music/song1.mp3");
     private AnchorPane menuPane;
     private Scene menuScene;
 
     public MainMenu() {
+        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+        BackgroundMusic.getInstance().play();
         menuPane = new AnchorPane();
         menuScene = new Scene(menuPane, WIDTH, HEIGHT);
         createBackground();
@@ -40,6 +44,7 @@ public class MainMenu {
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
                     startButton.setButtonReleasedStyle();
+                    BackgroundMusic.getInstance().stop();
                     ViewManager.getInstance().getGameManager().startGame();
                 }
 

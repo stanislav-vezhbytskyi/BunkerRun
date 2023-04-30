@@ -3,6 +3,7 @@ package view;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import model.BackgroundMusic;
 
 public class ViewManager {
     private static ViewManager instance;
@@ -20,7 +21,9 @@ public class ViewManager {
     private Scene mainScene;
     private Stage mainStage;
     private MainMenu mainMenu = new MainMenu();
-    private GameField gameManager = new GameField();
+    private GameField gameManager;
+    private BackgroundMusic backgroundMusic;
+    private Mode mode;
 
     public ViewManager() {
         mainPane = new AnchorPane();
@@ -32,14 +35,23 @@ public class ViewManager {
     }
 
     public GameField getGameManager() {
+        gameManager = new GameField();
         return  gameManager;
     }
+
+    public void setMode(Mode aMode) {
+        mode = aMode;
+    }
+
+    public Mode getMode() {return mode;}
 
     public void setMainScene(Scene aScene) {
         mainStage.setScene(aScene);
     }
 
     public void switchToMainMenu() {
+        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+       // BackgroundMusic.getInstance().play();
         mainStage.setScene(mainMenu.getScene());
     }
 

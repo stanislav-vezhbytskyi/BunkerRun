@@ -9,17 +9,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import model.BackgroundMusic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static view.PauseMenu.openPauseMenu;
-import static view.ViewManager.HEIGHT;
-import static view.ViewManager.WIDTH;
 
 public class GameField {
     private Scene gameScene;
@@ -37,6 +35,8 @@ public class GameField {
     }
 
     private void initGame() {
+        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
+        //BackgroundMusic.getInstance().play();
       /*  gamePane = new AnchorPane();
         gameScene = new Scene(gamePane, WIDTH, HEIGHT);
         Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
@@ -126,7 +126,6 @@ public class GameField {
             }
         };
         timer.start();
-
     }
     private void update(){
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5){

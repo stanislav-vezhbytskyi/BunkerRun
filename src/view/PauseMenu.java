@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.BackgroundMusic;
 
 import static view.ViewManager.getInstance;
 
@@ -22,6 +23,7 @@ public class PauseMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 stage.close();
+                BackgroundMusic.getInstance().stop();
                 ViewManager.getInstance().switchToMainMenu();
             }
         });
