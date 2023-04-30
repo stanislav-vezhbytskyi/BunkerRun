@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -25,6 +26,12 @@ public class BackgroundMusic {
     public void startSong(String fileName) {
         media = new Media(new File(fileName).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                mediaPlayer.seek(Duration.ZERO);
+            }
+        });
         mediaPlayer.play();
     }
 
