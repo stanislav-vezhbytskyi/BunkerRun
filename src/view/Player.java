@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import model.Sounds;
 
 
 public class Player extends Pane {
@@ -55,6 +56,7 @@ public class Player extends Pane {
                     }
                 }
             }*/
+
             this.setTranslateX(this.getTranslateX() + (movingRight ? 1 : -1));
         }
     }
@@ -81,6 +83,7 @@ public class Player extends Pane {
     }
     public void jumpPlayer(){
         if(canJump){
+            Sounds.getInstance().jump();
             playerVelocity = playerVelocity.add(0, JumpHeight);
             canJump = false;
         }
