@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.BackgroundMusic;
+import model.Sounds;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,14 +30,14 @@ public class GameField {
     private Pane uiRoot = new Pane();
     private Player player;
     private int levelWidth;
+    private boolean isPlayerRunning = false;
 
     public GameField() {
         initGame();
     }
 
     private void initGame() {
-        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
-        //BackgroundMusic.getInstance().play();
+         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
       /*  gamePane = new AnchorPane();
         gameScene = new Scene(gamePane, WIDTH, HEIGHT);
         Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
@@ -45,50 +46,49 @@ public class GameField {
         gameScene = new Scene(appRoot);
 
 
-        Rectangle bg = new Rectangle(1200,675);
+        Rectangle bg = new Rectangle(1200, 675);
         bg.setFill(Color.gray(0.5));
 
 
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
 
-        for (int i=0; i< LevelData.LEVEL1.length; i++){
+        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
             String line = LevelData.LEVEL1[i];
-            for (int j=0; j <line.length();j++){
-                switch (line.charAt(j)){
+            for (int j = 0; j < line.length(); j++) {
+                switch (line.charAt(j)) {
                     case '0':
                         break;
                     case '1':
-                        Node platform = createEntity(j*BLOCK_SIZE, i *BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.GREEN);
+                        Node platform = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.GREEN);
                         platforms.add(platform);
                         break;
                     case '2':
-                        Node platform_y = createEntity(j*BLOCK_SIZE, i *BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW);
+                        Node platform_y = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW);
                         platforms.add(platform_y);
                         break;
                 }
             }
         }
 
-        player = new Player("PlayerSprite1.png",0,0);
+        player = new Player("PlayerSprite1.png", 0, 0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
             int offset = newValue.intValue();
-            if (offset > 640 && offset < levelWidth-640){
-                gameRoot.setLayoutX(-(offset-640));
+            if (offset > 640 && offset < levelWidth - 640) {
+                gameRoot.setLayoutX(-(offset - 640));
             }
         });
 
 
-        Rectangle HealthLine = new Rectangle(10,10,2* player.getHP(),20);
+        Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
         HealthLine.setFill(Color.RED);
-
 
 
         Image image = new Image("pauseIcon.png");
         ImageView imageView = new ImageView(image);
 
-        Button stopButton = new Button("",imageView);
+        Button stopButton = new Button("", imageView);
         stopButton.setMaxWidth(30);
         stopButton.setMaxHeight(30);
         stopButton.setTranslateX(1160);
@@ -108,9 +108,6 @@ public class GameField {
             }
         });*/
 
-
-
-
         uiRoot.getChildren().add(stopButton);
         uiRoot.getChildren().add(HealthLine);
         gameRoot.getChildren().add(player);
@@ -127,28 +124,45 @@ public class GameField {
         };
         timer.start();
     }
-    private void update(){
-        if (isPressed(KeyCode.W) && player.getTranslateY() >= 5){
+
+    private void update() {
+        if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
+
             player.jumpPlayer();
             player.spriteAnimation.setAnimation(2);
             player.spriteAnimation.play();
+
         }
-        if (isPressed(KeyCode.A) && player.getTranslateX() >=5){
+        if (isPressed(KeyCode.A) && player.getTranslateX() >= 5) {
             player.moveX(false);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
             player.spriteAnimation.setAnimation(0);
             player.spriteAnimation.play();
         }
-        if (isPressed(KeyCode.D) && player.getTranslateX() + 40 <=levelWidth-5){
+        if (isPressed(KeyCode.D) && player.getTranslateX() + 40 <= levelWidth - 5) {
             player.moveX(true);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
             player.spriteAnimation.setAnimation(1);
             player.spriteAnimation.play();
         }
-        if (player.playerVelocity.getY() < 6){
-            player.playerVelocity = player.playerVelocity.add(0,1);
+        if (!isPressed(KeyCode.A) && !isPressed(KeyCode.D)) {
+            Sounds.getInstance().stopRunning();
+            isPlayerRunning = false;
         }
-        player.moveY((int)player.playerVelocity.getY());
+        if (player.playerVelocity.getY() < 6) {
+            player.playerVelocity = player.playerVelocity.add(0, 1);
+        }
+
+        player.moveY((int) player.playerVelocity.getY());
     }
-    private Node createEntity(int x, int y, int w, int h, Color color){
+
+    private Node createEntity(int x, int y, int w, int h, Color color) {
         Rectangle entity = new Rectangle(w, h);
         entity.setTranslateX(x);
         entity.setTranslateY(y);
@@ -157,7 +171,8 @@ public class GameField {
         return entity;
 
     }
-    private boolean isPressed(KeyCode key){
+
+    private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);
     }
 

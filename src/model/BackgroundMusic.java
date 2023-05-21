@@ -19,13 +19,10 @@ public class BackgroundMusic {
     private Media media;
     private MediaPlayer mediaPlayer;
 
-    public BackgroundMusic() {
-
-    }
-
     public void startSong(String fileName) {
         media = new Media(new File(fileName).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume(0.5);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setOnEndOfMedia(new Runnable() {
             public void run() {
