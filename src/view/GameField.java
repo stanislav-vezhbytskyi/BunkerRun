@@ -31,13 +31,14 @@ public class GameField {
     private Player player;
     private int levelWidth;
     private boolean isPlayerRunning = false;
+    AnimationTimer timer;
 
     public GameField() {
         initGame();
     }
 
     private void initGame() {
-         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
+        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
       /*  gamePane = new AnchorPane();
         gameScene = new Scene(gamePane, WIDTH, HEIGHT);
         Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
@@ -116,7 +117,13 @@ public class GameField {
 
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         gameScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
-        AnimationTimer timer = new AnimationTimer() {
+        /*AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                update();
+            }
+        };*/
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 update();
@@ -177,6 +184,13 @@ public class GameField {
     }
 
     public void startGame() {
+        ViewManager.getInstance().setMode(Mode.GAME);
         ViewManager.getInstance().setMainScene(gameScene);
+        isPlayerRunning = false;
+        timer.start();
+    }
+
+    public void stopGame() {
+        timer.stop();
     }
 }

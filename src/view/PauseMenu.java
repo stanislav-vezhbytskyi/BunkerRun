@@ -8,11 +8,13 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.BackgroundMusic;
+import model.Sounds;
 
 import static view.ViewManager.getInstance;
 
 public class PauseMenu {
     public static void openPauseMenu(){
+
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -22,6 +24,7 @@ public class PauseMenu {
         backToMainMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
                 stage.close();
                 BackgroundMusic.getInstance().stop();
                 ViewManager.getInstance().switchToMainMenu();

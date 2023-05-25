@@ -60,6 +60,17 @@ public class MainMenu {
         settingsButton.setLayoutX(395);
         settingsButton.setLayoutY(370);
         menuPane.getChildren().add(settingsButton);
+        settingsButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton().equals(MouseButton.PRIMARY)) {
+                    settingsButton.setButtonReleasedStyle();
+                    ViewManager.getInstance().goToSettings();
+                }
+
+            }
+        });
 
         BunkerRunButton aboutButton = new BunkerRunButton("ЗВ'ЯЗОК", 0);
         aboutButton.setLayoutX(395);
@@ -76,8 +87,8 @@ public class MainMenu {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    System.exit(0);
                     exitButton.setButtonReleasedStyle();
+                    System.exit(0);
                 }
 
             }
