@@ -23,7 +23,7 @@ public class ViewManager {
     private MainMenu mainMenu = new MainMenu();
     private GameField gameManager;
     private BackgroundMusic backgroundMusic;
-    private Mode mode;
+    //private Mode mode;
 
     public ViewManager() {
         mainPane = new AnchorPane();
@@ -39,12 +39,12 @@ public class ViewManager {
         return  gameManager;
     }
 
-    public void setMode(Mode aMode) {
+    /*public void setMode(Mode aMode) {
         mode = aMode;
     }
 
     public Mode getMode() {return mode;}
-
+*/
     public void setMainScene(Scene aScene) {
         mainStage.setScene(aScene);
     }
