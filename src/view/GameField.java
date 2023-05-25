@@ -60,10 +60,12 @@ public class GameField {
                         break;
                     case '1':
                         Node platform = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.GREEN);
+                        gameRoot.getChildren().add(platform);
                         platforms.add(platform);
                         break;
                     case '2':
                         Node platform_y = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW);
+                        gameRoot.getChildren().add(platform_y);
                         platforms.add(platform_y);
                         break;
                 }
@@ -110,7 +112,7 @@ public class GameField {
 
         uiRoot.getChildren().add(stopButton);
         uiRoot.getChildren().add(HealthLine);
-        gameRoot.getChildren().add(player);
+        gameRoot.getChildren().addAll(player,player.getLeftImpactZone(),player.getRightImpactZone());
         appRoot.getChildren().addAll(bg, gameRoot, uiRoot);
 
 
@@ -158,8 +160,10 @@ public class GameField {
         if (player.playerVelocity.getY() < 6) {
             player.playerVelocity = player.playerVelocity.add(0, 1);
         }
-
         player.moveY((int) player.playerVelocity.getY());
+        if(isPressed(KeyCode.K)){
+            player.kick();
+        }
     }
 
     private Node createEntity(int x, int y, int w, int h, Color color) {
@@ -167,7 +171,6 @@ public class GameField {
         entity.setTranslateX(x);
         entity.setTranslateY(y);
         entity.setFill(color);
-        gameRoot.getChildren().add(entity);
         return entity;
 
     }
