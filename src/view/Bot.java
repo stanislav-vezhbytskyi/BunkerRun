@@ -32,7 +32,7 @@ public class Bot extends Pane{
         imageView.setFitWidth(BOT_SIZE);
         imageView.setViewport(new Rectangle2D(x,y,BOT_SIZE,BOT_SIZE));
 
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(200),BOT_SIZE,BOT_SIZE);
+        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(200),BOT_SIZE,BOT_SIZE,3,2);
 
         getChildren().add(imageView);
     }

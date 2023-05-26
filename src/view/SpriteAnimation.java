@@ -8,28 +8,25 @@ import javafx.util.Duration;
 
 public class SpriteAnimation extends Transition {
        private final ImageView imageView;
-       private final int count = 2;
-       private final int columns = 3;
+       private int count ;
+       private int columns ;
        private int offsetX;
        private  int offsetY;
        private final int width;
        private final int height;
 
-       public SpriteAnimation(
-               ImageView imageView,
-               Duration duration,
-               int width, int height) {
+       public SpriteAnimation(ImageView imageView, Duration duration, int width, int height,int count,int columns) {
            this.imageView = imageView;
-       /*    this.count = count;
-           this.columns = columns;*/
-           this.offsetX = offsetX;
-           this.offsetY = offsetY;
+           this.count = count;
+           this.columns = columns;
+           this.offsetX = 0;
+           this.offsetY = 0;
            this.width = width;
            this.height = height;
            setCycleDuration(duration);
        }
        public void setAnimation(int x){
-           setOffsetY(40*x);
+           setOffsetY(this.width*x);
        }
        private void setOffsetX(int offsetX){
            this.offsetX = offsetX;

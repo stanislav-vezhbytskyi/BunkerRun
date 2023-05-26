@@ -116,7 +116,7 @@ public class GameField {
         uiRoot.getChildren().add(stopButton);
         uiRoot.getChildren().add(HealthLine);
 
-        gameRoot.getChildren().addAll(player,player.getLeftImpactZone(),player.getRightImpactZone());
+        gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(bg, gameRoot, uiRoot);
 
 
@@ -133,7 +133,7 @@ public class GameField {
 
     private void update() {
 
-        botController.createBot(gameRoot);
+        botController.updateBot(gameRoot,player);
 
 
 
@@ -173,10 +173,9 @@ public class GameField {
 
 
         if(isPressed(KeyCode.K)) {
-            player.kick();
+            player.kick(botController.getBotList());
         }
 
-        botController.botMove(player);
 
 
     }
