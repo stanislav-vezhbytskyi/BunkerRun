@@ -57,11 +57,12 @@ public class Player extends Pane {
         ImageView impactZoneImageView = new ImageView(impactZoneImg);
         impactZoneImageView.setFitHeight(PLAYER_SIZE);
         impactZoneImageView.setFitWidth(IMPACT_RADIUS);
-        impactZoneImageView.setViewport(new Rectangle2D(x, y, IMPACT_RADIUS, PLAYER_SIZE));
+        impactZoneImageView.setViewport(new Rectangle2D(x, y, PLAYER_SIZE, PLAYER_SIZE));
 
         impactZoneAnimation = new SpriteAnimation(impactZoneImageView,new Duration(200),IMPACT_RADIUS*3,PLAYER_SIZE*2,2,3);
         paneForImpactZoneAnimation = new Pane();
         paneForImpactZoneAnimation.getChildren().add(impactZoneImageView);
+        paneForImpactZoneAnimation.setVisible(false);
     }
 
     public void updateImpactZone() {
@@ -78,7 +79,6 @@ public class Player extends Pane {
         Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
         for (Bot bot : botArrayList) {
             if (currentImpactZone.getBoundsInParent().intersects(bot.getBoundsInParent())) {
-                paneForImpactZoneAnimation.getChildren().add(currentImpactZone);
                 bot.setHP(bot.getHP() - PLAYER_DAMAGE);
             }
         }
