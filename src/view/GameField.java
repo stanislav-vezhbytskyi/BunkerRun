@@ -208,6 +208,10 @@ public class GameField {
         player.moveY((int) player.playerVelocity.getY());
 
 
+        if(isPressed(KeyCode.K)) {
+            player.kick();
+        }
+
 
         botNumber = botList.size();
         for (int i = 0; i < botNumber; i++) {
@@ -235,9 +239,6 @@ public class GameField {
                 bot.botVelocity = bot.botVelocity.add(0, 1);
             }
             bot.moveY((int) bot.botVelocity.getY());
-
-        if(isPressed(KeyCode.K)){
-            player.kick();
 
         }
     }
