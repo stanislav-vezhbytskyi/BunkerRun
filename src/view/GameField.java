@@ -30,15 +30,10 @@ public class GameField {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Player player;
-    private Bot bot;
-    private ArrayList<Bot> botList= new ArrayList<>();
-    private int botNumber;
-    private Random rand = new Random();
-    private int random;
     private int levelWidth;
     private boolean isPlayerRunning = false;
+    private BotController botController = new BotController();
 
-    private boolean isBotRunning = false;
 
     public GameField() {
         initGame();
@@ -91,15 +86,6 @@ public class GameField {
         });
 
 
-
-
-        /*bot = new Bot ("BotSprite1.png", 0, 0);
-        bot.setTranslateY(430);
-        bot.setTranslateX(1500);
-        */
-
-
-
         Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
         HealthLine.setFill(Color.RED);
 
@@ -147,30 +133,8 @@ public class GameField {
 
     private void update() {
 
-        //КОСТИЛІ
-        random = rand.nextInt(1000);
-        if (random == 0){
-            bot = new Bot ("BotSprite1.png", 0, 0);
-            bot.setTranslateY(0);
-            bot.setTranslateX(1500);
-            botList.add(bot);
-            gameRoot.getChildren().add(bot);
+        botController.createBot(gameRoot);
 
-        }
-        else if (random == 1){
-            bot = new Bot ("BotSprite1.png", 0, 0);
-            bot.setTranslateY(300);
-            bot.setTranslateX(1500);
-            botList.add(bot);
-            gameRoot.getChildren().add(bot);
-        }
-        else if (random == 3){
-            bot = new Bot ("BotSprite1.png", 0, 0);
-            bot.setTranslateY(500);
-            bot.setTranslateX(1500);
-            botList.add(bot);
-            gameRoot.getChildren().add(bot);
-        }
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
@@ -212,35 +176,9 @@ public class GameField {
             player.kick();
         }
 
+        botController.botMove(player);
 
-        botNumber = botList.size();
-        for (int i = 0; i < botNumber; i++) {
-            bot = botList.get(i);
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 200 && (player.getTranslateX() - bot.getTranslateX() < 0)) {
-                bot.moveX(false);
-                isBotRunning = true;
-                bot.spriteAnimation.setAnimation(0);
-                bot.spriteAnimation.play();
-            }
 
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 200 && (player.getTranslateX() - bot.getTranslateX() > 0)) {
-                bot.moveX(true);
-                isBotRunning = true;
-                bot.spriteAnimation.setAnimation(1);
-                bot.spriteAnimation.play();
-            }
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) > 200) {
-                bot.moveX(false);
-                isBotRunning = true;
-                bot.spriteAnimation.setAnimation(0);
-                bot.spriteAnimation.play();
-            }
-            if (bot.botVelocity.getY() < 6) {
-                bot.botVelocity = bot.botVelocity.add(0, 1);
-            }
-            bot.moveY((int) bot.botVelocity.getY());
-
-        }
     }
 
     private Node createEntity(int x, int y, int w, int h, Color color) {
