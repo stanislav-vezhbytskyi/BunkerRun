@@ -21,7 +21,7 @@ public class BotController {
             random = rand.nextInt(BOT_SPAWN_FREQUENCY);
 
             if(random ==0||random == 1||random == 2){
-                bot = new Bot("BotSprite1.png", 0, 0);
+                bot = new Bot("Sprite-bot-2-neon.png", 0, 0);
                 bot.setTranslateY(150+200*random);
                 bot.setTranslateX(1500);
                 botList.add(bot);

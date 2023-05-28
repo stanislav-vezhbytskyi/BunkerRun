@@ -44,7 +44,7 @@ public class Player extends Pane {
         initImpactZone(x,y);
 
 
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(5000), PLAYER_SIZE, PLAYER_SIZE,
+        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(500), PLAYER_SIZE, PLAYER_SIZE,
                 5,4,10,10);
         getChildren().add(imageView);
     }

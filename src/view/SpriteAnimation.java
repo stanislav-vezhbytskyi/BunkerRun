@@ -20,23 +20,24 @@ public class SpriteAnimation extends Transition {
                            int offsetX, int offsetY) {
         this.imageView = imageView;
         this.count = count;
-        this.columns = columns;
+        this.columns = columns; //frames
         this.width = width;
         this.height = height;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.currentOffsetY = offsetY;
         setCycleDuration(duration);
-        currentOffsetY = offsetY;
+        imageView.setViewport(new Rectangle2D(offsetX,offsetY, width, height));
     }
 
     public void setAnimation(int numbAnimation) {
-        this.currentOffsetY = numbAnimation*(offsetY+height);
+        this.currentOffsetY = offsetY + numbAnimation*(height+offsetY);
+        System.out.println("y: "+currentOffsetY);
     }
     protected void interpolate(double k) {
         int index = Math.min((int) Math.floor(k * count), count - 1);
-        int x = (index % columns) * width + offsetX;
-        int y = (index / columns) * height + currentOffsetY;
-        System.out.println("x: " +x  + "y: "+y);
+        int x = (index % columns) * (width + offsetX)+offsetX;
+        int y =  + currentOffsetY;
         imageView.setViewport(new Rectangle2D(x, y, width, height));
     }
 }

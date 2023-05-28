@@ -54,9 +54,6 @@ public class GameField {
 
 
 
-     /*   Rectangle bg = new Rectangle(1200, 675);
-        bg.setFill(Color.gray(0.5));*/
-
 
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
         platforms = Platform.generateAllBlocks(gameRoot);
@@ -125,7 +122,6 @@ public class GameField {
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
-
             player.jumpPlayer();
             player.spriteAnimation.setAnimation(2);
             player.spriteAnimation.play();

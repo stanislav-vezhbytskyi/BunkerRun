@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import model.Sounds;
 public class Bot extends Pane{
-    public static final int BOT_SIZE = 40;
+    public static final int BOT_SIZE = 60;
     String urlImg = new String();
     Image botImg;
     ImageView imageView;
@@ -32,7 +32,7 @@ public class Bot extends Pane{
         imageView.setFitWidth(BOT_SIZE);
         imageView.setViewport(new Rectangle2D(x,y,BOT_SIZE,BOT_SIZE));
 
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(200),BOT_SIZE,BOT_SIZE,3,2,0,0);
+        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(900),BOT_SIZE,BOT_SIZE,4,4,10,10);
 
         getChildren().add(imageView);
     }
