@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.Random;
 
 import static view.PauseMenu.openPauseMenu;
+import static view.Platform.BLOCK_SIZE;
+import static view.ViewManager.HEIGHT;
+import static view.ViewManager.WIDTH;
 
 public class GameField {
     private Scene gameScene;
-    public static final int BLOCK_SIZE = 25;
     private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     public static ArrayList<Node> platforms = new ArrayList<>();
     private Pane appRoot = new Pane();
@@ -40,48 +42,33 @@ public class GameField {
     }
 
     private void initGame() {
-         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
-      /*  gamePane = new AnchorPane();
-        gameScene = new Scene(gamePane, WIDTH, HEIGHT);
-        Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
-        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
-        gamePane.setBackground(new Background(background));*/
-        gameScene = new Scene(appRoot);
+        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
 
 
-        Rectangle bg = new Rectangle(1200, 675);
-        bg.setFill(Color.gray(0.5));
+        gameScene = new Scene(appRoot,WIDTH,HEIGHT);
+
+        ImageView backgroundIV = new ImageView(new Image("Background+bunker.png"));
+
+
+
+
+
+
+     /*   Rectangle bg = new Rectangle(1200, 675);
+        bg.setFill(Color.gray(0.5));*/
 
 
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
+        platforms = Platform.generateAllBlocks(gameRoot);
 
-        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-            String line = LevelData.LEVEL1[i];
-            for (int j = 0; j < line.length(); j++) {
-                switch (line.charAt(j)) {
-                    case '0':
-                        break;
-                    case '1':
-                        Node platform = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.GREEN);
-                        gameRoot.getChildren().add(platform);
-                        platforms.add(platform);
-                        break;
-                    case '2':
-                        Node platform_y = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW);
-                        gameRoot.getChildren().add(platform_y);
-                        platforms.add(platform_y);
-                        break;
-                }
-            }
-        }
-
-        player = new Player("PlayerSprite1.png", 0, 0);
+        player = new Player("Sprite-main-scaled.png", 0, 0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
             int offset = newValue.intValue();
             if (offset > 640 && offset < levelWidth - 640) {
                 gameRoot.setLayoutX(-(offset - 640));
+                backgroundIV.setLayoutX(-(offset-640));
             }
         });
 
@@ -93,11 +80,11 @@ public class GameField {
         Image image = new Image("pauseIcon.png");
         ImageView imageView = new ImageView(image);
 
-        Button stopButton = new Button("", imageView);
-        stopButton.setMaxWidth(30);
-        stopButton.setMaxHeight(30);
-        stopButton.setTranslateX(1160);
-        stopButton.setOnAction(new EventHandler<ActionEvent>() {
+        Button pauseButton = new Button("", imageView);
+        pauseButton.setMaxWidth(30);
+        pauseButton.setMaxHeight(30);
+        pauseButton.setTranslateX(1160);
+        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 openPauseMenu();
@@ -113,11 +100,11 @@ public class GameField {
             }
         });*/
 
-        uiRoot.getChildren().add(stopButton);
+        uiRoot.getChildren().add(pauseButton);
         uiRoot.getChildren().add(HealthLine);
 
         gameRoot.getChildren().addAll(player,player.getImpactZone());
-        appRoot.getChildren().addAll(bg, gameRoot, uiRoot);
+        appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
 
 
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
@@ -175,18 +162,6 @@ public class GameField {
         if(isPressed(KeyCode.K)) {
             player.kick(botController.getBotList());
         }
-
-
-
-    }
-
-    private Node createEntity(int x, int y, int w, int h, Color color) {
-        Rectangle entity = new Rectangle(w, h);
-        entity.setTranslateX(x);
-        entity.setTranslateY(y);
-        entity.setFill(color);
-        return entity;
-
     }
 
     private boolean isPressed(KeyCode key) {

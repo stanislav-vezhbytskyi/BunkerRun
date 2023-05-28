@@ -44,8 +44,8 @@ public class Player extends Pane {
         initImpactZone(x,y);
 
 
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(200), PLAYER_SIZE, PLAYER_SIZE,2,2);
-
+        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(5000), PLAYER_SIZE, PLAYER_SIZE,
+                5,4,10,10);
         getChildren().add(imageView);
     }
     private void initImpactZone(int x, int y){
@@ -59,7 +59,7 @@ public class Player extends Pane {
         impactZoneImageView.setFitWidth(IMPACT_RADIUS);
         impactZoneImageView.setViewport(new Rectangle2D(x, y, PLAYER_SIZE, PLAYER_SIZE));
 
-        impactZoneAnimation = new SpriteAnimation(impactZoneImageView,new Duration(200),IMPACT_RADIUS*3,PLAYER_SIZE*2,2,3);
+       // impactZoneAnimation = new SpriteAnimation(impactZoneImageView,new Duration(200),IMPACT_RADIUS*3,PLAYER_SIZE*2,2,3);
         paneForImpactZoneAnimation = new Pane();
         paneForImpactZoneAnimation.getChildren().add(impactZoneImageView);
         paneForImpactZoneAnimation.setVisible(false);
@@ -129,7 +129,7 @@ public class Player extends Pane {
                             return;
                         }
                     } else {
-                        if (this.getTranslateY() == platform.getTranslateY() + GameField.BLOCK_SIZE) {
+                        if (this.getTranslateY() == platform.getTranslateY() + Platform.BLOCK_SIZE) {
                             return;
                         }
                     }
