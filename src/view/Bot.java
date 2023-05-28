@@ -24,11 +24,16 @@ public class Bot extends Pane{
     private final int defaultHP = 20;
     private int HP = 20;
     private Rectangle HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, BOT_SIZE*defaultHP/HP, 5);
+    private int viewingDistance = 400;
     public void setHP(int HP){
         this.HP = HP;
     }
     public int getHP(){
         return HP;
+    }
+
+    public int getViewingDistance(){
+        return viewingDistance;
     }
 
 

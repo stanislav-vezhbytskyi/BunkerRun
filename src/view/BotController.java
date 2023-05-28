@@ -34,20 +34,20 @@ public class BotController {
         botNumber = botList.size();
         for (int i = 0; i < botNumber; i++) {
             bot = botList.get(i);
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() < 0)) {
+            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() < 0) && (Math.abs(player.getTranslateX() - bot.getTranslateX()) <= bot.getViewingDistance())) {
                 bot.moveX(false);
                 isBotRunning = true;
                 bot.spriteAnimation.setAnimation(0);
                 bot.spriteAnimation.play();
             }
 
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() > 0)) {
+            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() > 0) && (Math.abs(player.getTranslateX() - bot.getTranslateX()) <= bot.getViewingDistance())) {
                 bot.moveX(true);
                 isBotRunning = true;
                 bot.spriteAnimation.setAnimation(1);
                 bot.spriteAnimation.play();
             }
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) > 30) {
+            if ((Math.abs(player.getTranslateY() - bot.getTranslateY()) > 30) || (Math.abs(player.getTranslateX() - bot.getTranslateX()) > bot.getViewingDistance())) {
                 bot.moveX(false);
                 isBotRunning = true;
                 bot.spriteAnimation.setAnimation(0);
