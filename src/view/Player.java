@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class Player extends Pane {
     public static final int PLAYER_SIZE = 40;
     public static final int IMPACT_RADIUS = 100;
-    public static final int PLAYER_DAMAGE = 10;
+    public static final int PLAYER_DAMAGE = 3;
     String urlImg;
     Image playerImg;
     ImageView imageView;

@@ -61,6 +61,14 @@ public class BotController {
 
     }
 
+    public void updateHPLines() {
+        botNumber = botList.size();
+        for (int i = 0; i < botNumber; i++) {
+            bot = botList.get(i);
+            bot.updateHPLine();
+        }
+    }
+
     private void checkBotsAlive(Pane gameRoot) {
         Iterator<Bot> iterator = botList.iterator();
         while (iterator.hasNext()) {
@@ -76,6 +84,8 @@ public class BotController {
 
         botMove(player);
         checkBotsAlive(gameRoot);
+
+        updateHPLines();
     }
     public ArrayList<Bot> getBotList() {
         return botList;

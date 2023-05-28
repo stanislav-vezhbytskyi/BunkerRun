@@ -35,6 +35,7 @@ public class GameField {
     private int levelWidth;
     private boolean isPlayerRunning = false;
     private BotController botController = new BotController();
+    private int kickDelay = 0;
 
 
     public GameField() {
@@ -156,7 +157,13 @@ public class GameField {
 
 
         if(isPressed(KeyCode.K)) {
-            player.kick(botController.getBotList());
+            if (kickDelay == 0) {
+                player.kick(botController.getBotList());
+                kickDelay = 7;
+            }
+            else {
+                kickDelay--;
+            }
         }
     }
 

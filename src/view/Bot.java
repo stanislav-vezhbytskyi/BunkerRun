@@ -6,8 +6,13 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import model.Sounds;
+
+import java.awt.*;
+
 public class Bot extends Pane{
     public static final int BOT_SIZE = 60;
     String urlImg = new String();
@@ -16,7 +21,9 @@ public class Bot extends Pane{
     public Point2D botVelocity = new Point2D(0,0);
     public SpriteAnimation spriteAnimation;
     private int botSpeed = 1;
+    private final int defaultHP = 20;
     private int HP = 20;
+    private Rectangle HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, BOT_SIZE*defaultHP/HP, 5);
     public void setHP(int HP){
         this.HP = HP;
     }
@@ -24,7 +31,12 @@ public class Bot extends Pane{
         return HP;
     }
 
+
     public Bot(String urlImg, int x, int y){
+
+        HPLine.setFill(Color.RED);
+        this.getChildren().add(HPLine);
+
         botImg = new Image(urlImg);
         this.urlImg = urlImg;
         imageView = new ImageView(botImg);
@@ -61,5 +73,8 @@ public class Bot extends Pane{
             }
             this.setTranslateY(this.getTranslateY() + (movingDown ? 1 : -1));
         }
+    }
+    public void updateHPLine(){
+        HPLine.setWidth((int)BOT_SIZE*HP/defaultHP);
     }
 }

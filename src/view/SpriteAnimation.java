@@ -25,14 +25,13 @@ public class SpriteAnimation extends Transition {
         this.height = height;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.currentOffsetY = offsetY;
         setCycleDuration(duration);
         imageView.setViewport(new Rectangle2D(offsetX,offsetY, width, height));
     }
 
     public void setAnimation(int numbAnimation) {
         this.currentOffsetY = offsetY + numbAnimation*(height+offsetY);
-        System.out.println("y: "+currentOffsetY);
+        //System.out.println("y: "+currentOffsetY);
     }
     protected void interpolate(double k) {
         int index = Math.min((int) Math.floor(k * count), count - 1);
