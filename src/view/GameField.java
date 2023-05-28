@@ -32,6 +32,7 @@ public class GameField {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Player player;
+    private Rectangle PlayerHealthLine;
     private int levelWidth;
     private boolean isPlayerRunning = false;
     private BotController botController = new BotController();
@@ -71,8 +72,11 @@ public class GameField {
         });
 
 
-        Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
-        HealthLine.setFill(Color.RED);
+        Rectangle BunkerHealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
+        BunkerHealthLine.setFill(Color.RED);
+
+        PlayerHealthLine = new Rectangle(300, 10, 2 * player.getHP(), 20);
+        PlayerHealthLine.setFill(Color.BLUE);
 
 
         Image image = new Image("pauseIcon.png");
@@ -99,7 +103,8 @@ public class GameField {
         });*/
 
         uiRoot.getChildren().add(pauseButton);
-        uiRoot.getChildren().add(HealthLine);
+        uiRoot.getChildren().add(BunkerHealthLine);
+        uiRoot.getChildren().add(PlayerHealthLine);
 
         gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
@@ -119,7 +124,7 @@ public class GameField {
     private void update() {
 
         botController.updateBot(gameRoot,player);
-
+        updatePlayerHealthLine();
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
@@ -166,7 +171,9 @@ public class GameField {
             }
         }
     }
-
+    public void updatePlayerHealthLine(){
+        PlayerHealthLine.setWidth(2 * player.getHP());
+    }
     private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);
     }
