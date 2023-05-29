@@ -34,6 +34,8 @@ public class GameField {
     private Player player;
     private Rectangle playerHealthLine;
     private Bunker bunker;
+    private Rectangle PlayerHealthLine;
+    private Rectangle strafeAmountLine;
     private int levelWidth;
     private boolean isPlayerRunning = false;
     private BotController botController = new BotController();
@@ -82,6 +84,8 @@ public class GameField {
         playerHealthLine.setStrokeWidth(1);
         playerHealthLine.setStroke(Color.BLACK);
 
+        strafeAmountLine = new Rectangle(600, 10, 2 * player.getStrafeAmount(), 20);
+        strafeAmountLine.setFill(Color.YELLOW);
 
         Image image = new Image("pauseIcon.png");
         ImageView imageView = new ImageView(image);
@@ -109,6 +113,7 @@ public class GameField {
         uiRoot.getChildren().add(pauseButton);
         uiRoot.getChildren().add(bunker.getLineHP());
         uiRoot.getChildren().add(playerHealthLine);
+        uiRoot.getChildren().add(strafeAmountLine);
 
         gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
@@ -128,12 +133,49 @@ public class GameField {
 
         botController.updateBot(gameRoot,player,bunker);
         updatePlayerHealthLine();
+        updateStrafeAmountLine();
         bunker.updateLineHP();
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
             player.jumpPlayer();
             player.spriteAnimation.setAnimation(2);
+            player.spriteAnimation.play();
+
+        }
+
+        if (isPressed(KeyCode.D) && isPressed(KeyCode.SHIFT) && player.getTranslateX() + 40 <= levelWidth - 5 && player.getStrafeAmount() > 0) {
+            player.strafe(true);
+            /*if (kickDelay <= 0) {
+                player.kick(botController.getBotList());
+                kickDelay = 7;
+            }
+            else {
+                kickDelay-=1;
+            }*/
+            player.setStrafeAmount(player.getStrafeAmount()-1);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
+            player.spriteAnimation.setAnimation(1);
+            player.spriteAnimation.play();
+        }
+        if (isPressed(KeyCode.A) && isPressed(KeyCode.SHIFT) && player.getTranslateX() >= 5 && player.getStrafeAmount() > 0) {
+            player.strafe(false);
+            /*if (kickDelay <= 0) {
+                player.kick(botController.getBotList());
+                kickDelay = 7;
+            }
+            else {
+                kickDelay-=1;
+            }*/
+            player.setStrafeAmount(player.getStrafeAmount()-1);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
+            player.spriteAnimation.setAnimation(1);
             player.spriteAnimation.play();
         }
         if (isPressed(KeyCode.A) && player.getTranslateX() >= 5) {
@@ -167,10 +209,16 @@ public class GameField {
         if(isPressed(KeyCode.K)) {
             player.performAttack(botController.getBotList());
         }
+        if(isPressed(KeyCode.O)) {
+            System.out.println("X: " + player.getTranslateX() + "; Y: " + player.getTranslateY() + ".");
+        }
     }
     public void updatePlayerHealthLine(){
         playerHealthLine.setWidth(2 * player.getHP());
         playerHealthLine.setX(bunker.getLineHP().getX()+bunker.getLineHP().getWidth());
+    }
+    public void updateStrafeAmountLine(){
+        strafeAmountLine.setWidth(2 * player.getStrafeAmount());
     }
     private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);

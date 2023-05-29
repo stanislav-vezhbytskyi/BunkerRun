@@ -34,6 +34,13 @@ public class Player extends Pane {
     private int PlayerSpeed = 5;
     private int JumpHeight = -23;
     private int HP = 100;
+    private int strafeAmount = 100;
+    public int getStrafeAmount(){
+        return  strafeAmount;
+    }
+    public void setStrafeAmount(int amount){
+        this.strafeAmount = amount;
+    }
 
     public Player(String urlImg, int x, int y) {
         this.playerImg = new Image(urlImg);
@@ -153,7 +160,6 @@ public class Player extends Pane {
             updateImpactZone();
         }
     }
-
     public void moveY(int value) {
         boolean movingDown = value > 0;
         for (int i = 0; i < Math.abs(value); i++) {
@@ -181,6 +187,13 @@ public class Player extends Pane {
             Sounds.getInstance().jump();
             playerVelocity = playerVelocity.add(0, JumpHeight);
             canJump = false;
+        }
+    }
+    public void strafe(boolean movingRight) {
+        this.looksToRight = movingRight;
+        for (int i = 0; i < Math.abs(PlayerSpeed*1.3); i++) {
+            this.setTranslateX(this.getTranslateX() + (movingRight ? 1 : -1));
+            updateImpactZone();
         }
     }
 }

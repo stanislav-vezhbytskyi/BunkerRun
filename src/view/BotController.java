@@ -1,7 +1,6 @@
 package view;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +13,7 @@ public class BotController {
     private Random rand = new Random();
     private int random;
     private final int MAX_BOT_NUMBER = 10;
-    private final int BOT_SPAWN_FREQUENCY = 500;
+    private final int BOT_SPAWN_FREQUENCY = 900;
 
     private void createBot(Pane gameRoot) {
         if (botList.size() < MAX_BOT_NUMBER) {
@@ -22,8 +21,8 @@ public class BotController {
 
             if (random == 0 || random == 1 || random == 2) {
                 bot = new Bot("Sprite-bot-2-neon.png", 0, 0);
-                bot.setTranslateY(150 + 200 * random);
-                bot.setTranslateX(1500);
+                bot.setTranslateY(140 + 225 * random);
+                bot.setTranslateX(1940);
                 botList.add(bot);
                 gameRoot.getChildren().add(bot);
             }
@@ -66,7 +65,7 @@ public class BotController {
             if (bot.botVelocity.getY() < 6) {
                 bot.botVelocity = bot.botVelocity.add(0, 1);
             }
-            bot.moveY((int) bot.botVelocity.getY());
+            //bot.moveY((int) bot.botVelocity.getY());
             if (!bot.isBotRunning) {
                 if (bot.kickDelay == 0) {
                     bot.kick(player,bunker);
@@ -93,13 +92,18 @@ public class BotController {
     }
 
 
-    private void checkBotsAlive(Pane gameRoot) {
+    private void checkBotsAlive(Pane gameRoot, Player player) {
         Iterator<Bot> iterator = botList.iterator();
         while (iterator.hasNext()) {
             Bot bot = iterator.next();
             if (bot.getHP() <= 0) {
                 gameRoot.getChildren().remove(bot);
                 iterator.remove();
+                if (player.getStrafeAmount() >= 75)
+                    player.setStrafeAmount(100);
+                else {
+                    player.setStrafeAmount(player.getStrafeAmount() + 25);
+                }
             }
         }
     }
@@ -108,7 +112,7 @@ public class BotController {
         createBot(gameRoot);
 
         botMove(player,bunker);
-        checkBotsAlive(gameRoot);
+        checkBotsAlive(gameRoot, player);
 
         updateHPLines();
     }
