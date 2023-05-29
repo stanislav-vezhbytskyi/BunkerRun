@@ -1,6 +1,7 @@
 package view;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,15 +14,15 @@ public class BotController {
     private Random rand = new Random();
     private int random;
     private final int MAX_BOT_NUMBER = 10;
-    private final int BOT_SPAWN_FREQUENCY = 1000;
+    private final int BOT_SPAWN_FREQUENCY = 500;
 
     private void createBot(Pane gameRoot) {
         if (botList.size() < MAX_BOT_NUMBER) {
             random = rand.nextInt(BOT_SPAWN_FREQUENCY);
 
-            if(random == 0||random == 1||random == 2){
+            if (random == 0 || random == 1 || random == 2) {
                 bot = new Bot("Sprite-bot-2-neon.png", 0, 0);
-                bot.setTranslateY(150+200*random);
+                bot.setTranslateY(150 + 200 * random);
                 bot.setTranslateX(1500);
                 botList.add(bot);
                 gameRoot.getChildren().add(bot);
@@ -29,45 +30,49 @@ public class BotController {
         }
     }
 
-    private void botMove(Player player) {
+    private void botMove(Player player, Bunker bunker) {
         botNumber = botList.size();
         for (int i = 0; i < botNumber; i++) {
             bot = botList.get(i);
-            if (bot.isBotRunning && Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() < 0) && (Math.abs(player.getTranslateX() - bot.getTranslateX()) <= bot.getViewingDistance())) {
-                bot.moveX(false);
-                bot.isBotRunning = true;
-                bot.spriteAnimation.setAnimation(0);
-                bot.spriteAnimation.play();
-            }
+            double playerBotHeightDifference = Math.abs(player.getTranslateY() - bot.getTranslateY());
+            double playerBotWidthDifference = Math.abs(player.getTranslateX() - bot.getTranslateX());
 
-            if (bot.isBotRunning && Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && (player.getTranslateX() - bot.getTranslateX() > 0) && (Math.abs(player.getTranslateX() - bot.getTranslateX()) <= bot.getViewingDistance())) {
-                bot.moveX(true);
-                bot.isBotRunning = true;
-                bot.spriteAnimation.setAnimation(1);
-                bot.spriteAnimation.play();
+            if (bot.isBotRunning) {
+                if (playerBotHeightDifference <= 30 && playerBotWidthDifference <= bot.getViewingDistance()) {
+                    boolean playerOnRight = player.getTranslateX() - bot.getTranslateX() > 0;
+                    bot.moveX(playerOnRight);
+                    bot.isBotRunning = true;
+                    bot.spriteAnimation.setAnimation(playerOnRight ? 1 : 0);
+                    bot.spriteAnimation.play();
+                }
+
+                if (playerBotHeightDifference > 30 || playerBotWidthDifference > bot.getViewingDistance()) {
+                    bot.moveX(false);
+                    bot.isBotRunning = true;
+                    bot.spriteAnimation.setAnimation(0);
+                    bot.spriteAnimation.play();
+                }
+
+                if(bot.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
+                    bot.isBotRunning = false;
+                    bot.kick(player,bunker);
+                }
             }
-            if (bot.isBotRunning && ((Math.abs(player.getTranslateY() - bot.getTranslateY()) > 30) || (Math.abs(player.getTranslateX() - bot.getTranslateX()) > bot.getViewingDistance()))) {
-                bot.moveX(false);
-                bot.isBotRunning = true;
-                bot.spriteAnimation.setAnimation(0);
-                bot.spriteAnimation.play();
-            }
-            if (Math.abs(player.getTranslateY() - bot.getTranslateY()) <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.PLAYER_SIZE/2 - bot.getTranslateX() - bot.BOT_SIZE/2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.PLAYER_SIZE/2+ bot.BOT_SIZE/2 <= bot.BOT_IMPACT_RADIUS))) {
+            if (playerBotHeightDifference <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.PLAYER_SIZE / 2 - bot.getTranslateX() - bot.BOT_SIZE / 2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.PLAYER_SIZE / 2 + bot.BOT_SIZE / 2 <= bot.BOT_IMPACT_RADIUS))) {
                 bot.isBotRunning = false;
-            } else{
+            } else if((bot.getTranslateX()>bunker.getBunkerArea().getWidth()-bot.getWidth())){
                 bot.isBotRunning = true;
             }
             if (bot.botVelocity.getY() < 6) {
                 bot.botVelocity = bot.botVelocity.add(0, 1);
             }
             bot.moveY((int) bot.botVelocity.getY());
-            if (!bot.isBotRunning){
+            if (!bot.isBotRunning) {
                 if (bot.kickDelay == 0) {
-                    bot.kick(player);
+                    bot.kick(player,bunker);
 
                     bot.kickDelay = 20;
-                }
-                else {
+                } else {
                     bot.kickDelay--;
                 }
             }
@@ -75,7 +80,7 @@ public class BotController {
 
     }
 
-    private boolean isPlayerOnRight(Player player, Bot bot){
+    private boolean isPlayerOnRight(Player player, Bot bot) {
         return player.getTranslateX() > bot.getTranslateX();
     }
 
@@ -98,14 +103,16 @@ public class BotController {
             }
         }
     }
-    public void updateBot(Pane gameRoot,Player player){
+
+    public void updateBot(Pane gameRoot, Player player, Bunker bunker) {
         createBot(gameRoot);
 
-        botMove(player);
+        botMove(player,bunker);
         checkBotsAlive(gameRoot);
 
         updateHPLines();
     }
+
     public ArrayList<Bot> getBotList() {
         return botList;
     }

@@ -9,15 +9,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import model.Sounds;
-
-import java.awt.*;
 
 public class Bot extends Pane{
     public static final int BOT_SIZE = 60;
     public static final int BOT_DAMAGE = 1;
     public static final int BOT_IMPACT_RADIUS = 100;
-    String urlImg = new String();
+    String urlImg;
     Image botImg;
     ImageView imageView;
     private boolean looksToRight = false;
@@ -43,7 +40,6 @@ public class Bot extends Pane{
     public int getViewingDistance(){
         return viewingDistance;
     }
-
 
     public Bot(String urlImg, int x, int y){
 
@@ -101,7 +97,7 @@ public class Bot extends Pane{
         rightImpactZone = new Rectangle(x + BOT_SIZE / 2, y, BOT_IMPACT_RADIUS, BOT_SIZE);
         leftImpactZone = new Rectangle(x - BOT_IMPACT_RADIUS + BOT_SIZE / 2, y, BOT_IMPACT_RADIUS, BOT_SIZE);
 
-        Image impactZoneImg = new Image("botDamage.png");
+        Image impactZoneImg = new Image("damage.png");
         ImageView impactZoneImageView = new ImageView(impactZoneImg);
         impactZoneImageView.setFitHeight(BOT_SIZE);
         impactZoneImageView.setFitWidth(BOT_IMPACT_RADIUS);
@@ -123,11 +119,17 @@ public class Bot extends Pane{
         leftImpactZone.setVisible(false);
     }
 
-    public void kick(Player player) {
+    public void kick(Player player,Bunker bunker) {
+        this.spriteAnimation.setAnimation(looksToRight ? 3 : 2);
+        this.spriteAnimation.play();
+
         Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
-            if (currentImpactZone.getBoundsInParent().intersects(player.getBoundsInParent())) {
-                player.setHP(player.getHP() - BOT_DAMAGE);
-                System.out.println(player.getHP());
-            }
+
+        if (currentImpactZone.getBoundsInParent().intersects(player.getBoundsInParent())) {
+            player.setHP(player.getHP() - BOT_DAMAGE);
+        }
+        if(currentImpactZone.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
+            bunker.setBunkerHP(bunker.getBunkerHP() - BOT_DAMAGE);
+        }
     }
 }

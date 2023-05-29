@@ -32,7 +32,8 @@ public class GameField {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Player player;
-    private Rectangle PlayerHealthLine;
+    private Rectangle playerHealthLine;
+    private Bunker bunker;
     private int levelWidth;
     private boolean isPlayerRunning = false;
     private BotController botController = new BotController();
@@ -55,12 +56,11 @@ public class GameField {
 
 
 
-
-
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
         platforms = Platform.generateAllBlocks(gameRoot);
 
-        player = new Player("Sprite-main-scaled.png", 0, 0);
+
+        player = new Player("5.png", 0, 0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -71,12 +71,16 @@ public class GameField {
             }
         });
 
+        bunker = new Bunker(500,10,10,200,20);
+        bunker.getLineHP().setStrokeWidth(1);
+        bunker.getLineHP().setStroke(Color.BLACK);
+        bunker.getLineHP().setFill(Color.BLUE);
 
-        Rectangle BunkerHealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
-        BunkerHealthLine.setFill(Color.RED);
 
-        PlayerHealthLine = new Rectangle(300, 10, 2 * player.getHP(), 20);
-        PlayerHealthLine.setFill(Color.BLUE);
+        playerHealthLine = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
+        playerHealthLine.setFill(Color.RED);
+        playerHealthLine.setStrokeWidth(1);
+        playerHealthLine.setStroke(Color.BLACK);
 
 
         Image image = new Image("pauseIcon.png");
@@ -103,12 +107,11 @@ public class GameField {
         });*/
 
         uiRoot.getChildren().add(pauseButton);
-        uiRoot.getChildren().add(BunkerHealthLine);
-        uiRoot.getChildren().add(PlayerHealthLine);
+        uiRoot.getChildren().add(bunker.getLineHP());
+        uiRoot.getChildren().add(playerHealthLine);
 
         gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
-
 
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         gameScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
@@ -123,15 +126,15 @@ public class GameField {
 
     private void update() {
 
-        botController.updateBot(gameRoot,player);
+        botController.updateBot(gameRoot,player,bunker);
         updatePlayerHealthLine();
+        bunker.updateLineHP();
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
             player.jumpPlayer();
             player.spriteAnimation.setAnimation(2);
             player.spriteAnimation.play();
-
         }
         if (isPressed(KeyCode.A) && player.getTranslateX() >= 5) {
             player.moveX(false);
@@ -162,17 +165,12 @@ public class GameField {
 
 
         if(isPressed(KeyCode.K)) {
-            if (kickDelay == 0) {
-                player.kick(botController.getBotList());
-                kickDelay = 7;
-            }
-            else {
-                kickDelay--;
-            }
+            player.performAttack(botController.getBotList());
         }
     }
     public void updatePlayerHealthLine(){
-        PlayerHealthLine.setWidth(2 * player.getHP());
+        playerHealthLine.setWidth(2 * player.getHP());
+        playerHealthLine.setX(bunker.getLineHP().getX()+bunker.getLineHP().getWidth());
     }
     private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);

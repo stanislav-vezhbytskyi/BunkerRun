@@ -1,6 +1,6 @@
 package view;
 
-import javafx.scene.paint.Color;
+import javafx.animation.PauseTransition;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -18,17 +18,19 @@ public class Player extends Pane {
     public static final int PLAYER_SIZE = 40;
     public static final int IMPACT_RADIUS = 100;
     public static final int PLAYER_DAMAGE = 3;
-    String urlImg;
-    Image playerImg;
-    ImageView imageView;
-    Rectangle rightImpactZone;
-    Rectangle leftImpactZone;
+    private double DELAY_BETWEEN_ATTACKS = 0.5;
+    private String urlImg;
+    private Image playerImg;
+    private ImageView imageView;
+    private Rectangle rightImpactZone;
+    private Rectangle leftImpactZone;
     public Point2D playerVelocity = new Point2D(0, 0);
     public SpriteAnimation spriteAnimation;
-    private SpriteAnimation impactZoneAnimation;
+    public SpriteAnimation impactZoneAnimation;
     private Pane paneForImpactZoneAnimation;
     private boolean canJump = true;
     private boolean looksToRight = true;
+    private long timeLastAttack = 0;
     private int PlayerSpeed = 5;
     private int JumpHeight = -23;
     private int HP = 100;
@@ -41,47 +43,81 @@ public class Player extends Pane {
         imageView.setFitWidth(PLAYER_SIZE);
         imageView.setViewport(new Rectangle2D(x, y, PLAYER_SIZE, PLAYER_SIZE));
 
-        initImpactZone(x,y);
+        initImpactZone(x, y);
 
 
         spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(500), PLAYER_SIZE, PLAYER_SIZE,
-                5,4,10,10);
+                5, 4, 10, 10);
         getChildren().add(imageView);
     }
-    private void initImpactZone(int x, int y){
+
+    private void initImpactZone(int x, int y) {
 
         rightImpactZone = new Rectangle(x + PLAYER_SIZE / 2, y, IMPACT_RADIUS, PLAYER_SIZE);
         leftImpactZone = new Rectangle(x - IMPACT_RADIUS + PLAYER_SIZE / 2, y, IMPACT_RADIUS, PLAYER_SIZE);
 
-        Image impactZoneImg = new Image("damage.png");
+        Image impactZoneImg = new Image("Damage-pers.png");
         ImageView impactZoneImageView = new ImageView(impactZoneImg);
         impactZoneImageView.setFitHeight(PLAYER_SIZE);
         impactZoneImageView.setFitWidth(IMPACT_RADIUS);
-        impactZoneImageView.setViewport(new Rectangle2D(x, y, PLAYER_SIZE, PLAYER_SIZE));
+        impactZoneImageView.setViewport(new Rectangle2D(x, y, IMPACT_RADIUS * 3, PLAYER_SIZE * 2));
 
-       // impactZoneAnimation = new SpriteAnimation(impactZoneImageView,new Duration(200),IMPACT_RADIUS*3,PLAYER_SIZE*2,2,3);
-        paneForImpactZoneAnimation = new Pane();
-        paneForImpactZoneAnimation.getChildren().add(impactZoneImageView);
-        paneForImpactZoneAnimation.setVisible(false);
+        impactZoneAnimation = new SpriteAnimation(impactZoneImageView, new Duration(200), IMPACT_RADIUS, PLAYER_SIZE, 2, 3, 10, 10);
+
+        paneForImpactZoneAnimation = new Pane(impactZoneImageView);
+
     }
 
     public void updateImpactZone() {
         rightImpactZone.setX(this.getTranslateX() + PLAYER_SIZE / 2);
         rightImpactZone.setY(this.getTranslateY());
-        rightImpactZone.setVisible(false);
 
         leftImpactZone.setX(this.getTranslateX() - IMPACT_RADIUS + PLAYER_SIZE / 2);
         leftImpactZone.setY(this.getTranslateY());
-        leftImpactZone.setVisible(false);
+
+        paneForImpactZoneAnimation.setVisible(false);
+
+
     }
 
-    public void kick(ArrayList<Bot> botArrayList) {
-        Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
-        for (Bot bot : botArrayList) {
-            if (currentImpactZone.getBoundsInParent().intersects(bot.getBoundsInParent())) {
-                bot.setHP(bot.getHP() - PLAYER_DAMAGE);
-            }
+    private boolean canAttack() {
+        long currentTime = System.currentTimeMillis();
+        boolean canAttack = (currentTime - timeLastAttack) / 1000 > DELAY_BETWEEN_ATTACKS;
+        this.timeLastAttack = canAttack ? System.currentTimeMillis() : this.timeLastAttack;
+        return canAttack;
+    }
+
+    public void performAttack(ArrayList<Bot> botArrayList){
+        if(canAttack()){
+            attack(botArrayList);
         }
+    }
+
+    private void attack(ArrayList<Bot> botArrayList) {
+        this.spriteAnimation.setAnimation(looksToRight ? 3 : 4);
+        this.spriteAnimation.play();
+        Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
+
+        impactZoneAnimation.setAnimation(looksToRight ? 1 : 0);
+
+        paneForImpactZoneAnimation.setVisible(true);
+        paneForImpactZoneAnimation.setTranslateX(currentImpactZone.getX());
+        paneForImpactZoneAnimation.setTranslateY(currentImpactZone.getY());
+
+        impactZoneAnimation.play();
+
+
+        PauseTransition delay = new PauseTransition(Duration.seconds(0.25));
+        delay.setOnFinished(event -> {
+            for (Bot bot : botArrayList) {
+                if (currentImpactZone.getBoundsInParent().intersects(bot.getBoundsInParent())) {
+                    bot.setHP(bot.getHP() - PLAYER_DAMAGE);
+                }
+            }
+            paneForImpactZoneAnimation.setVisible(false);
+        });
+        delay.play();
+
     }
 
     public Pane getImpactZone() {
