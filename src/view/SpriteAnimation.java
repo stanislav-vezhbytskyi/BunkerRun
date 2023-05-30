@@ -7,40 +7,35 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class SpriteAnimation extends Transition {
-       private final ImageView imageView;
-       private final int count = 2;
-       private final int columns = 3;
-       private int offsetX;
-       private  int offsetY;
-       private final int width;
-       private final int height;
+    private final ImageView imageView;
+    private final int count;
+    private final int columns;
+    private final int offsetX;
+    private final int offsetY;
+    private final int width;
+    private final int height;
+    private int currentOffsetY;
 
-       public SpriteAnimation(
-               ImageView imageView,
-               Duration duration,
-               int width, int height) {
-           this.imageView = imageView;
-       /*    this.count = count;
-           this.columns = columns;*/
-           this.offsetX = offsetX;
-           this.offsetY = offsetY;
-           this.width = width;
-           this.height = height;
-           setCycleDuration(duration);
-       }
-       public void setAnimation(int x){
-           setOffsetY(40*x);
-       }
-       private void setOffsetX(int offsetX){
-           this.offsetX = offsetX;
-       }
-       private void setOffsetY(int offsetY){
-           this.offsetY = offsetY;
-       }
-       protected void interpolate(double k) {
-           final int index = Math.min((int) Math.floor(k * count), count - 1);
-           final int x = (index % columns) * width + offsetX;
-           final int y = (index / columns) * height + offsetY;
-           imageView.setViewport(new Rectangle2D(x, y, width, height));
-       }
-   }
+    public SpriteAnimation(ImageView imageView, Duration duration, int width, int height, int count, int columns,
+                           int offsetX, int offsetY) {
+        this.imageView = imageView;
+        this.count = count;
+        this.columns = columns;
+        this.width = width;
+        this.height = height;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        setCycleDuration(duration);
+        imageView.setViewport(new Rectangle2D(offsetX,offsetY, width, height));
+    }
+
+    public void setAnimation(int numbAnimation) {
+        this.currentOffsetY = offsetY + numbAnimation*(height+offsetY);
+    }
+    protected void interpolate(double k) {
+        int index = Math.min((int) Math.floor(k * count), count - 1);
+        int x = (index % columns) * (width + offsetX)+offsetX;
+        int y =  + currentOffsetY;
+        imageView.setViewport(new Rectangle2D(x, y, width, height));
+    }
+}

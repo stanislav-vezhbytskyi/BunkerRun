@@ -1,17 +1,24 @@
 package view;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import model.BackgroundMusic;
 import model.Sounds;
 import model.SkinService;
@@ -19,8 +26,12 @@ import model.SkinService;
 import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import static view.PauseMenu.openPauseMenu;
+import static view.Platform.BLOCK_SIZE;
+import static view.ViewManager.HEIGHT;
+import static view.ViewManager.WIDTH;
 
 public class GameField {
     private Scene gameScene;
@@ -31,51 +42,40 @@ public class GameField {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Player player;
+    private Rectangle playerHealthLine;
+    private Rectangle playerHealthLineStroke;
+    private Bunker bunker;
+    private Rectangle strafeAmountLine;
+    private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
-    AnimationTimer timer;
+    private BotController botController = new BotController(30);
+    private   AnimationTimer timer;
 
+    private boolean isGameOnPause = false;
+    public void setGameOnPause(boolean isGameOnPause) {
+        this.isGameOnPause = isGameOnPause;
+    }
     public GameField() {
         initGame();
     }
 
     private void initGame() {
         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
-        //BackgroundMusic.getInstance().play();
-      /*  gamePane = new AnchorPane();
-        gameScene = new Scene(gamePane, WIDTH, HEIGHT);
-        Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
-        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
-        gamePane.setBackground(new Background(background));*/
-        gameScene = new Scene(appRoot);
 
+        gameScene = new Scene(appRoot,WIDTH,HEIGHT);
 
-        Rectangle bg = new Rectangle(1200, 675);
-        bg.setFill(Color.gray(0.5));
+        ImageView backgroundIV = new ImageView(new Image("Background+bunker.png"));
 
 
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
+        platforms = Platform.generateAllBlocks(gameRoot);
 
-        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-            String line = LevelData.LEVEL1[i];
-            for (int j = 0; j < line.length(); j++) {
-                switch (line.charAt(j)) {
-                    case '0':
-                        break;
-                    case '1':
-                        Node platform = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.GREEN);
-                        platforms.add(platform);
-                        break;
-                    case '2':
-                        Node platform_y = createEntity(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW);
-                        platforms.add(platform_y);
-                        break;
-                }
-            }
-        }
 
-        String imageUrl = SkinService.getPickedSkinSprite();
-        player = new Player(imageUrl,0,0);
+        player = new Player("5.png", "Damage-pers.png",0, 0,40,
+                10,5,0.15,100,400,4);
+        /*!!!!!!!!!*/String imageUrl = SkinService.getPickedSkinSprite();
+        //player = new Player(imageUrl,0,0);
 //        player = new Player("PlayerSprite1.png",0,0);
         player.setTranslateY(0);
         player.setTranslateX(0);
@@ -83,69 +83,121 @@ public class GameField {
             int offset = newValue.intValue();
             if (offset > 640 && offset < levelWidth - 640) {
                 gameRoot.setLayoutX(-(offset - 640));
+                backgroundIV.setLayoutX(-(offset-640));
             }
         });
 
+        bunker = new Bunker(500,10,10,250,20);
+        bunker.getStrokeLineHP().setStrokeWidth(1);
+        bunker.getStrokeLineHP().setStroke(Color.BLACK);
+        bunker.getStrokeLineHP().setFill(Color.TRANSPARENT);
+        bunker.getLineHP().setFill(Color.BLUE);
 
-        Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
+
+        playerHealthLine = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
+        playerHealthLine.setFill(Color.RED);
+
+        playerHealthLineStroke = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
+        playerHealthLineStroke.setStroke(Color.BLACK);
+        playerHealthLineStroke.setStrokeWidth(1);
+        playerHealthLineStroke.setFill(Color.TRANSPARENT);
+
+
+        /*!!!!!!!!!*/Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
         HealthLine.setFill(Color.RED);
 
 
+        strafeAmountLine = new Rectangle(10, bunker.getLineHP().getY()+bunker.getLineHP().getHeight(),
+                2 * player.getStrafeAmount(), 10);
+        strafeAmountLine.setFill(Color.YELLOW);
+        strafeAmountLineStroke = new Rectangle(10, bunker.getLineHP().getY()+bunker.getLineHP().getHeight(),
+                3 * player.getStrafeAmount(), 10);
+        strafeAmountLine.setFill(Color.YELLOW);
+        strafeAmountLineStroke.setStrokeWidth(1);
+        strafeAmountLineStroke.setStroke(Color.BLACK);
+        strafeAmountLineStroke.setFill(Color.TRANSPARENT);
 
-        Image image = new Image("pauseIcon.png");
+
+        Image image = new Image("img_2.png");
         ImageView imageView = new ImageView(image);
 
-        Button stopButton = new Button("", imageView);
-        stopButton.setMaxWidth(30);
-        stopButton.setMaxHeight(30);
-        stopButton.setTranslateX(1160);
-        stopButton.setOnAction(new EventHandler<ActionEvent>() {
+        Button pauseButton = new Button("", imageView);
+        pauseButton.setMaxWidth(30);
+        pauseButton.setMaxHeight(30);
+        pauseButton.setTranslateX(1160);
+        GameField gameField = this;
+        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                openPauseMenu();
+                openPauseMenu(gameField);
+                isGameOnPause = true;
             }
         });
 
-        //спроба виклика менюхи з ESCAPE
-      /*  gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            public void handle(KeyEvent ke) {
-                if (ke.getCode() == KeyCode.ESCAPE) {
-                    openPauseMenu();
-                }
-            }
-        });*/
+        uiRoot.getChildren().add(pauseButton);
+        uiRoot.getChildren().addAll(bunker.getLineHP(),bunker.getStrokeLineHP());
+        uiRoot.getChildren().addAll(playerHealthLine,playerHealthLineStroke);
+        uiRoot.getChildren().addAll(strafeAmountLine,strafeAmountLineStroke);
 
-
-
-
-        uiRoot.getChildren().add(stopButton);
-        uiRoot.getChildren().add(HealthLine);
-        gameRoot.getChildren().add(player);
-        appRoot.getChildren().addAll(bg, gameRoot, uiRoot);
-
+        gameRoot.getChildren().addAll(player,player.getImpactZone());
+        appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
 
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         gameScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
-        /*AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                update();
-            }
-        };*/
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                update();
+                if (!isGameOnPause){
+                    update();
+                }
             }
         };
         timer.start();
     }
 
     private void update() {
-        if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
 
-            player.jumpPlayer();
+        botController.updateBot(gameRoot,player,bunker);
+        updatePlayerHealthLine();
+        updateStrafeAmountLine();
+        player.updateStrafe();
+        bunker.updateLineHP();
+        if(botController.botsAreOver()){
+            endGame(true);
+        }
+        if(bunker.getBunkerHP()<=0||player.getHP()<=0){
+            endGame(false);
+        }
+
+
+
+        if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
+            player.jump();
             player.spriteAnimation.setAnimation(2);
+            player.spriteAnimation.play();
+
+        }
+
+        if (isPressed(KeyCode.D) && isPressed(KeyCode.SHIFT) && player.getTranslateX() + 40 <= levelWidth - 5 && player.getStrafeAmount() > 0) {
+            player.strafe(true);
+
+            player.setStrafeAmount(player.getStrafeAmount()-1);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
+            player.spriteAnimation.setAnimation(1);
+            player.spriteAnimation.play();
+        }
+        if (isPressed(KeyCode.A) && isPressed(KeyCode.SHIFT) && player.getTranslateX() >= 5 && player.getStrafeAmount() > 0) {
+            player.strafe(false);
+
+            player.setStrafeAmount(player.getStrafeAmount()-1);
+            if (!isPlayerRunning) {
+                Sounds.getInstance().startRunning();
+                isPlayerRunning = true;
+            }
+            player.spriteAnimation.setAnimation(1);
             player.spriteAnimation.play();
         }
         if (isPressed(KeyCode.A) && player.getTranslateX() >= 5) {
@@ -170,21 +222,24 @@ public class GameField {
             Sounds.getInstance().stopRunning();
             isPlayerRunning = false;
         }
-        if (player.playerVelocity.getY() < 6) {
-            player.playerVelocity = player.playerVelocity.add(0, 1);
+        if (player.velocity.getY() < 6) {
+            player.velocity = player.velocity.add(0, 1);
         }
+        player.moveY((int) player.velocity.getY());
 
-        player.moveY((int) player.playerVelocity.getY());
+
+        if(isPressed(KeyCode.K)) {
+            player.performAttack(botController.getBotList());
+        }
+        if(isPressed(KeyCode.O)) {
+            System.out.println("X: " + player.getTranslateX() + "; Y: " + player.getTranslateY() + "; DAMAGE: " + player.DAMAGE + ".");
+        }
     }
-
-    private Node createEntity(int x, int y, int w, int h, Color color) {
-        Rectangle entity = new Rectangle(w, h);
-        entity.setTranslateX(x);
-        entity.setTranslateY(y);
-        entity.setFill(color);
-        gameRoot.getChildren().add(entity);
-        return entity;
-
+    public void updatePlayerHealthLine(){
+        playerHealthLine.setWidth(2 * player.getHP());
+    }
+    public void updateStrafeAmountLine(){
+        strafeAmountLine.setWidth(3 * player.getStrafeAmount());
     }
 
     private boolean isPressed(KeyCode key) {
@@ -192,13 +247,26 @@ public class GameField {
     }
 
     public void startGame() {
-        ViewManager.getInstance().setMode(Mode.GAME);
         ViewManager.getInstance().setMainScene(gameScene);
-        isPlayerRunning = false;
-        timer.start();
     }
+    public void endGame(boolean isWin){
+        Label text = new Label( isWin ? "win" : "you are lose");
+        text.setFont(Font.font(150));
+        text.setTextFill(isWin?Color.YELLOW:Color.RED);
+        text.setAlignment(Pos.CENTER);
+        text.setPrefSize(1200,675);
 
-    public void stopGame() {
+        appRoot.getChildren().add(text);
+
+        Sounds.getInstance().stopRunning();
+
         timer.stop();
+
+        PauseTransition delay = new PauseTransition(Duration.seconds(4));
+        delay.setOnFinished(event -> {
+            BackgroundMusic.getInstance().stop();
+            ViewManager.getInstance().switchToMainMenu();
+        });
+        delay.play();
     }
 }

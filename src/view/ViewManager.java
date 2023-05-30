@@ -34,7 +34,7 @@ public class ViewManager {
     private GameField gameManager;
     private Store storeManager;
     private BackgroundMusic backgroundMusic;
-//    private Mode mode;
+
     private Settings settings = new Settings();
     private Mode mode;
 

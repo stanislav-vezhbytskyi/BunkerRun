@@ -3,36 +3,67 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import model.BackgroundMusic;
-import model.Sounds;
+import model.BunkerRunButton;
 
 import static view.ViewManager.getInstance;
 
 public class PauseMenu {
-    public static void openPauseMenu(){
-
+    public static void openPauseMenu(GameField gameField){
         Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                gameField.setGameOnPause(false);
+            }
+        });
 
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        Rectangle bg = new Rectangle(0,0,450,250);
+
+        bg.setFill(Color.color(48/255.0, 78/255.0, 78/255.0));
         Pane pane = new Pane();
 
-        Button backToMainMenu = new Button("Exit");
+        BunkerRunButton backToGame = new BunkerRunButton("Повернутись до гри",1);
+        backToGame.setLayoutY(30);
+        backToGame.setLayoutX(20);
+        backToGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                gameField.setGameOnPause(false);
+                stage.close();
+            }
+        });
+
+        BunkerRunButton settingButton = new BunkerRunButton("Налаштування",3);
+        settingButton.setLayoutY(100);
+        settingButton.setLayoutX(20);
+
+        BunkerRunButton backToMainMenu = new BunkerRunButton("Вихід",2);
+        backToMainMenu.setLayoutY(170);
         backToMainMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
                 stage.close();
                 BackgroundMusic.getInstance().stop();
                 ViewManager.getInstance().switchToMainMenu();
             }
         });
-        pane.getChildren().add(backToMainMenu);
+        backToMainMenu.setLayoutX(20);
 
-        Scene scene = new Scene(pane,400,400);
+
+        pane.getChildren().addAll(bg,backToMainMenu,backToGame,settingButton);
+
+        Scene scene = new Scene(pane,450,250);
         stage.setScene(scene);
         stage.show();
     }
