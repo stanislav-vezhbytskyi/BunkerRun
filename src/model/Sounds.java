@@ -32,7 +32,7 @@ public class Sounds {
     private MediaPlayer buttonPlayer = new MediaPlayer(buttonMedia);
     private Media attackMedia = new Media(new File("src/resources/epicWoosh.mp3").toURI().toString());
     private MediaPlayer attackPlayer = new MediaPlayer(attackMedia);
-    private double currentVolume;
+    private double currentVolume = 1;
 
     public void startRunning() {
         runningPlayer.play();
@@ -70,8 +70,14 @@ public class Sounds {
         }
     }
 
-    public void setVolume(Double aVolume) {
+    public void setVolume(double aVolume) {
         runningPlayer.setVolume(aVolume);
         jumpPlayer.setVolume(aVolume);
+        attackPlayer.setVolume(aVolume);
+        currentVolume = aVolume;
+    }
+
+    public double getCurrentVolume() {
+        return currentVolume;
     }
 }

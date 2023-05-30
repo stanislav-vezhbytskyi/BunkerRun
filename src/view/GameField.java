@@ -130,6 +130,7 @@ public class GameField {
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Sounds.getInstance().clickButtonSound();
                 openPauseMenu(ViewManager.getInstance().getGameManager());
                 isGameOnPause = true;
             }

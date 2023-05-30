@@ -34,7 +34,6 @@ public class ViewManager {
     private GameField gameManager;
     private Store storeManager;
     private BackgroundMusic backgroundMusic;
-
     private Settings settings = new Settings();
     private Mode mode;
 
@@ -86,6 +85,7 @@ public class ViewManager {
 
     public void goToSettings() {
         mode = Mode.SETTINGS;
+        settings.updateVolume();
         mainStage.setScene(settings.getSettingsScene());
     }
 
