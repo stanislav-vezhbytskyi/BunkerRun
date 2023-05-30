@@ -20,11 +20,11 @@ public class BotController {
             random = rand.nextInt(BOT_SPAWN_FREQUENCY);
 
             if (random == 0 || random == 1 || random == 2) {
-                bot = new Bot("Sprite-bot-2-neon.png", 0, 0);
+                bot = new Bot("Sprite-bot-2-neon.png", "Damage-bot.png",0, 0,1,60);
                 bot.setTranslateY(140 + 225 * random);
                 bot.setTranslateX(1940);
                 botList.add(bot);
-                gameRoot.getChildren().add(bot);
+                gameRoot.getChildren().addAll(bot,bot.getImpactZone());
             }
         }
     }
@@ -54,26 +54,21 @@ public class BotController {
 
                 if(bot.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
                     bot.isBotRunning = false;
-                    bot.kick(player,bunker);
+                    bot.attack(player,bunker);
                 }
             }
-            if (playerBotHeightDifference <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.PLAYER_SIZE / 2 - bot.getTranslateX() - bot.BOT_SIZE / 2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.PLAYER_SIZE / 2 + bot.BOT_SIZE / 2 <= bot.BOT_IMPACT_RADIUS))) {
+            if (playerBotHeightDifference <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.SIZE / 2 - bot.getTranslateX() - bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.SIZE / 2 + bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS))) {
                 bot.isBotRunning = false;
             } else if((bot.getTranslateX()>bunker.getBunkerArea().getWidth()-bot.getWidth())){
                 bot.isBotRunning = true;
             }
-            if (bot.botVelocity.getY() < 6) {
-                bot.botVelocity = bot.botVelocity.add(0, 1);
+            if (bot.velocity.getY() < 6) {
+                bot.velocity = bot.velocity.add(0, 1);
             }
             //bot.moveY((int) bot.botVelocity.getY());
             if (!bot.isBotRunning) {
-                if (bot.kickDelay == 0) {
-                    bot.kick(player,bunker);
+                bot.performAttack(player,bunker);
 
-                    bot.kickDelay = 20;
-                } else {
-                    bot.kickDelay--;
-                }
             }
         }
 

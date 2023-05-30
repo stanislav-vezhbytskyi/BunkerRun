@@ -5,12 +5,14 @@ import javafx.scene.shape.Rectangle;
 public class Bunker {
     private int bunkerHP;
     private Rectangle lineHP;
+    private Rectangle strokeLineHP;
     private Rectangle bunkerArea;
 
     public Bunker(int bunkerHP, int x, int y, int width, int height) {
         this.bunkerHP = bunkerHP;
         this.lineHP = new Rectangle(x, y, width, height);
-        bunkerArea = new Rectangle(0,0,350,ViewManager.HEIGHT);
+        strokeLineHP = new Rectangle(x, y, width, height);
+        bunkerArea = new Rectangle(0,0,300,ViewManager.HEIGHT);
     }
 
     public void setBunkerHP(int newHP) {
@@ -25,6 +27,9 @@ public class Bunker {
     }
     public Rectangle getLineHP() {
         return this.lineHP;
+    }
+    public Rectangle getStrokeLineHP(){
+        return strokeLineHP;
     }
     public void updateLineHP(){
         if(getBunkerHP()>0){

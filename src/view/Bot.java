@@ -1,5 +1,6 @@
 package view;
 
+import javafx.animation.PauseTransition;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -10,26 +11,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class Bot extends Pane{
-    public static final int BOT_SIZE = 60;
-    public static final int BOT_DAMAGE = 1;
+import java.util.ArrayList;
+
+public class Bot extends Player{
     public static final int BOT_IMPACT_RADIUS = 100;
-    String urlImg;
-    Image botImg;
-    ImageView imageView;
-    private boolean looksToRight = false;
-    public Point2D botVelocity = new Point2D(0,0);
-    public SpriteAnimation spriteAnimation;
     public boolean isBotRunning = true;
-    private Pane paneForImpactZoneAnimation;
-    private int botSpeed = 1;
     private final int defaultHP = 20;
     private int HP = 20;
-    private Rectangle HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, BOT_SIZE*defaultHP/HP, 5);
+    private Rectangle HPLine ;
     private int viewingDistance = 400;
-    public int kickDelay = 0;
-    Rectangle rightImpactZone;
-    Rectangle leftImpactZone;
     public void setHP(int HP){
         this.HP = HP;
     }
@@ -41,95 +31,46 @@ public class Bot extends Pane{
         return viewingDistance;
     }
 
-    public Bot(String urlImg, int x, int y){
-
+    public Bot(String urlImgSkin, String urlImgDamageArea, int x, int y, int DAMAGE,int SIZE) {
+        super(urlImgSkin, urlImgDamageArea, x, y,SIZE,DAMAGE,1,1);
+        HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, SIZE*defaultHP/HP, 5);
         HPLine.setFill(Color.RED);
-        this.getChildren().add(HPLine);
-
-        botImg = new Image(urlImg);
-        this.urlImg = urlImg;
-        imageView = new ImageView(botImg);
-        imageView.setFitHeight(BOT_SIZE);
-        imageView.setFitWidth(BOT_SIZE);
-        imageView.setViewport(new Rectangle2D(x,y,BOT_SIZE,BOT_SIZE));
-
-        initImpactZone(x,y);
-
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(900),BOT_SIZE,BOT_SIZE,4,4,10,10);
-
-        getChildren().add(imageView);
-    }
-    public void moveX(boolean movingRight){
-        looksToRight = movingRight;
-        for (int i=0; i < Math.abs(botSpeed);i++){
-          this.setTranslateX(this.getTranslateX() + (movingRight ? 1 : -1));
-        }
-        updateImpactZone();
-    }
-
-    public void moveY(int value){
-        boolean movingDown = value > 0;
-        for (int i=0; i < Math.abs(value);i++){
-            for (Node platform : GameField.platforms){
-                if(this.getBoundsInParent().intersects(platform.getBoundsInParent())){
-                    if(movingDown){
-                        if (this.getTranslateY() + BOT_SIZE == platform.getTranslateY()){
-                            //canJump = true;
-                            return;
-                        }
-                    }else {
-                        if (this.getTranslateY() == platform.getTranslateY() + Platform.BLOCK_SIZE) {
-                            return;
-                        }
-                    }
-                }
-            }
-            this.setTranslateY(this.getTranslateY() + (movingDown ? 1 : -1));
-        }
-        updateImpactZone();
+        getChildren().add(this.HPLine);
     }
     public void updateHPLine(){
-        HPLine.setWidth((int)BOT_SIZE*HP/defaultHP);
+        HPLine.setWidth((int)SIZE*HP/defaultHP);
+    }
+    public void performAttack(Player player,Bunker bunker){
+        if(canAttack()){
+            attack(player,bunker);
+        }
     }
 
-    private void initImpactZone(int x, int y){
-
-        rightImpactZone = new Rectangle(x + BOT_SIZE / 2, y, BOT_IMPACT_RADIUS, BOT_SIZE);
-        leftImpactZone = new Rectangle(x - BOT_IMPACT_RADIUS + BOT_SIZE / 2, y, BOT_IMPACT_RADIUS, BOT_SIZE);
-
-        Image impactZoneImg = new Image("damage.png");
-        ImageView impactZoneImageView = new ImageView(impactZoneImg);
-        impactZoneImageView.setFitHeight(BOT_SIZE);
-        impactZoneImageView.setFitWidth(BOT_IMPACT_RADIUS);
-        impactZoneImageView.setViewport(new Rectangle2D(x, y, BOT_SIZE, BOT_SIZE));
-
-        // impactZoneAnimation = new SpriteAnimation(impactZoneImageView,new Duration(200),IMPACT_RADIUS*3,PLAYER_SIZE*2,2,3);
-        paneForImpactZoneAnimation = new Pane();
-        paneForImpactZoneAnimation.getChildren().add(impactZoneImageView);
-        paneForImpactZoneAnimation.setVisible(false);
-    }
-
-    public void updateImpactZone() {
-        rightImpactZone.setX(this.getTranslateX() + BOT_SIZE / 2);
-        rightImpactZone.setY(this.getTranslateY());
-        rightImpactZone.setVisible(false);
-
-        leftImpactZone.setX(this.getTranslateX() - BOT_IMPACT_RADIUS + BOT_SIZE / 2);
-        leftImpactZone.setY(this.getTranslateY());
-        leftImpactZone.setVisible(false);
-    }
-
-    public void kick(Player player,Bunker bunker) {
+    public void attack(Player player,Bunker bunker) {
         this.spriteAnimation.setAnimation(looksToRight ? 3 : 2);
         this.spriteAnimation.play();
 
-        Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
+        Rectangle currentImpactZone = looksToRight ? this.rightImpactZone : this.leftImpactZone;
 
-        if (currentImpactZone.getBoundsInParent().intersects(player.getBoundsInParent())) {
-            player.setHP(player.getHP() - BOT_DAMAGE);
-        }
-        if(currentImpactZone.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
-            bunker.setBunkerHP(bunker.getBunkerHP() - BOT_DAMAGE);
-        }
+        impactZoneAnimation.setAnimation(looksToRight ? 0 : 1);
+
+        paneForImpactZoneAnimation.setVisible(true);
+        paneForImpactZoneAnimation.setTranslateX(currentImpactZone.getX());
+        paneForImpactZoneAnimation.setTranslateY(currentImpactZone.getY());
+
+        impactZoneAnimation.play();
+
+        PauseTransition delay = new PauseTransition(Duration.seconds(0.5));
+        delay.setOnFinished(event -> {
+            if (currentImpactZone.getBoundsInParent().intersects(player.getBoundsInParent())) {
+                player.setHP(player.getHP() - DAMAGE);
+            }
+            if(currentImpactZone.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
+                bunker.setBunkerHP(bunker.getBunkerHP() - DAMAGE);
+            }
+            paneForImpactZoneAnimation.setVisible(false);
+        });
+        delay.play();
+
     }
 }

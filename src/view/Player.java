@@ -15,71 +15,73 @@ import java.util.ArrayList;
 
 
 public class Player extends Pane {
-    public static final int PLAYER_SIZE = 40;
+    public final int SIZE;
     public static final int IMPACT_RADIUS = 100;
-    public static final int PLAYER_DAMAGE = 3;
-    private double DELAY_BETWEEN_ATTACKS = 0.5;
-    private String urlImg;
-    private Image playerImg;
-    private ImageView imageView;
-    private Rectangle rightImpactZone;
-    private Rectangle leftImpactZone;
-    public Point2D playerVelocity = new Point2D(0, 0);
+    public static int DAMAGE;
+    private final double DELAY_BETWEEN_ATTACKS;
+    private final int SPEED;
+    private final int JUMP_HEIGHT = -23;
+    private ImageView characterSkinImageView;
+    Rectangle rightImpactZone;
+    Rectangle leftImpactZone;
+    public Point2D velocity = new Point2D(0, 0);
     public SpriteAnimation spriteAnimation;
     public SpriteAnimation impactZoneAnimation;
-    private Pane paneForImpactZoneAnimation;
+    Pane paneForImpactZoneAnimation;
     private boolean canJump = true;
-    private boolean looksToRight = true;
+    boolean looksToRight = true;
     private long timeLastAttack = 0;
-    private int PlayerSpeed = 5;
-    private int JumpHeight = -23;
-    private int HP = 100;
-    private int strafeAmount = 100;
-    public int getStrafeAmount(){
+    private int currentHP = 100;
+    private double strafeAmount = 100;
+    public double getStrafeAmount(){
         return  strafeAmount;
     }
-    public void setStrafeAmount(int amount){
+    public void setStrafeAmount(double amount){
         this.strafeAmount = amount;
     }
 
-    public Player(String urlImg, int x, int y) {
-        this.playerImg = new Image(urlImg);
-        this.urlImg = urlImg;
-        imageView = new ImageView(playerImg);
-        imageView.setFitHeight(PLAYER_SIZE);
-        imageView.setFitWidth(PLAYER_SIZE);
-        imageView.setViewport(new Rectangle2D(x, y, PLAYER_SIZE, PLAYER_SIZE));
 
-        initImpactZone(x, y);
+    public Player(String urlImgSkin,String urlImgDamageArea, int x, int y, int SIZE, int DAMAGE,int SPEED, double DELAY_BETWEEN_ATTACKS) {
+        this.SIZE = SIZE;
+        this.DAMAGE = DAMAGE;
+        this.SPEED = SPEED;
+        this.DELAY_BETWEEN_ATTACKS = DELAY_BETWEEN_ATTACKS;
+        Image image = new Image(urlImgSkin);
+        characterSkinImageView = new ImageView(image);
+        characterSkinImageView.setFitHeight(this.SIZE);
+        characterSkinImageView.setFitWidth(this.SIZE);
+        characterSkinImageView.setViewport(new Rectangle2D(x, y, SIZE, SIZE));
+
+        initImpactZone(urlImgDamageArea,x, y);
 
 
-        spriteAnimation = new SpriteAnimation(this.imageView, Duration.millis(500), PLAYER_SIZE, PLAYER_SIZE,
+        spriteAnimation = new SpriteAnimation(this.characterSkinImageView, Duration.millis(500), SIZE, SIZE,
                 5, 4, 10, 10);
-        getChildren().add(imageView);
+        getChildren().add(characterSkinImageView);
     }
 
-    private void initImpactZone(int x, int y) {
+    private void initImpactZone(String urlImgDamageArea,int x, int y) {
 
-        rightImpactZone = new Rectangle(x + PLAYER_SIZE / 2, y, IMPACT_RADIUS, PLAYER_SIZE);
-        leftImpactZone = new Rectangle(x - IMPACT_RADIUS + PLAYER_SIZE / 2, y, IMPACT_RADIUS, PLAYER_SIZE);
+        rightImpactZone = new Rectangle(x + SIZE / 2, y, IMPACT_RADIUS, SIZE);
+        leftImpactZone = new Rectangle(x - IMPACT_RADIUS + SIZE / 2, y, IMPACT_RADIUS, SIZE);
 
-        Image impactZoneImg = new Image("Damage-pers.png");
+        Image impactZoneImg = new Image(urlImgDamageArea);
         ImageView impactZoneImageView = new ImageView(impactZoneImg);
-        impactZoneImageView.setFitHeight(PLAYER_SIZE);
+        impactZoneImageView.setFitHeight(SIZE);
         impactZoneImageView.setFitWidth(IMPACT_RADIUS);
-        impactZoneImageView.setViewport(new Rectangle2D(x, y, IMPACT_RADIUS * 3, PLAYER_SIZE * 2));
+        impactZoneImageView.setViewport(new Rectangle2D(x, y, IMPACT_RADIUS * 3, SIZE * 2));
 
-        impactZoneAnimation = new SpriteAnimation(impactZoneImageView, new Duration(200), IMPACT_RADIUS, PLAYER_SIZE, 2, 3, 10, 10);
+        impactZoneAnimation = new SpriteAnimation(impactZoneImageView, new Duration(200), IMPACT_RADIUS, SIZE, 2, 3, 10, 10);
 
         paneForImpactZoneAnimation = new Pane(impactZoneImageView);
 
     }
 
     public void updateImpactZone() {
-        rightImpactZone.setX(this.getTranslateX() + PLAYER_SIZE / 2);
+        rightImpactZone.setX(this.getTranslateX() + SIZE / 2);
         rightImpactZone.setY(this.getTranslateY());
 
-        leftImpactZone.setX(this.getTranslateX() - IMPACT_RADIUS + PLAYER_SIZE / 2);
+        leftImpactZone.setX(this.getTranslateX() - IMPACT_RADIUS + SIZE / 2);
         leftImpactZone.setY(this.getTranslateY());
 
         paneForImpactZoneAnimation.setVisible(false);
@@ -87,7 +89,7 @@ public class Player extends Pane {
 
     }
 
-    private boolean canAttack() {
+    boolean canAttack() {
         long currentTime = System.currentTimeMillis();
         boolean canAttack = (currentTime - timeLastAttack) / 1000 > DELAY_BETWEEN_ATTACKS;
         this.timeLastAttack = canAttack ? System.currentTimeMillis() : this.timeLastAttack;
@@ -100,7 +102,7 @@ public class Player extends Pane {
         }
     }
 
-    private void attack(ArrayList<Bot> botArrayList) {
+    void attack(ArrayList<Bot> botArrayList) {
         this.spriteAnimation.setAnimation(looksToRight ? 3 : 4);
         this.spriteAnimation.play();
         Rectangle currentImpactZone = looksToRight ? rightImpactZone : leftImpactZone;
@@ -118,7 +120,7 @@ public class Player extends Pane {
         delay.setOnFinished(event -> {
             for (Bot bot : botArrayList) {
                 if (currentImpactZone.getBoundsInParent().intersects(bot.getBoundsInParent())) {
-                    bot.setHP(bot.getHP() - PLAYER_DAMAGE);
+                    bot.setHP(bot.getHP() - DAMAGE);
                 }
             }
             paneForImpactZoneAnimation.setVisible(false);
@@ -133,29 +135,16 @@ public class Player extends Pane {
 
 
     public void setHP(int HP) {
-        this.HP = HP;
+        this.currentHP = HP;
     }
 
     public int getHP() {
-        return HP;
+        return currentHP;
     }
 
     public void moveX(boolean movingRight) {
         this.looksToRight = movingRight;
-        for (int i = 0; i < Math.abs(PlayerSpeed); i++) {
-          /*  for (Node platform : platforms){
-                if(player.getBoundsInParent().intersects(platform.getBoundsInParent())){
-                    if(movingRight){
-                        if (player.getTranslateX() + 40 == platform.getTranslateX()){
-                            return;
-                        }
-                    }else {
-                        if (player.getTranslateX() == platform.getTranslateX() + 60) {
-                            return;
-                        }
-                    }
-                }
-            }*/
+        for (int i = 0; i < Math.abs(SPEED); i++) {
             this.setTranslateX(this.getTranslateX() + (movingRight ? 1 : -1));
             updateImpactZone();
         }
@@ -166,7 +155,7 @@ public class Player extends Pane {
             for (Node platform : GameField.platforms) {
                 if (this.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingDown) {
-                        if (this.getTranslateY() + PLAYER_SIZE == platform.getTranslateY()) {
+                        if (this.getTranslateY() + SIZE == platform.getTranslateY()) {
                             canJump = true;
                             return;
                         }
@@ -182,18 +171,23 @@ public class Player extends Pane {
         }
     }
 
-    public void jumpPlayer() {
+    public void jump() {
         if (canJump) {
             Sounds.getInstance().jump();
-            playerVelocity = playerVelocity.add(0, JumpHeight);
+            velocity = velocity.add(0, JUMP_HEIGHT);
             canJump = false;
         }
     }
     public void strafe(boolean movingRight) {
         this.looksToRight = movingRight;
-        for (int i = 0; i < Math.abs(PlayerSpeed*1.3); i++) {
+        for (int i = 0; i < Math.abs(SPEED*1.3); i++) {
             this.setTranslateX(this.getTranslateX() + (movingRight ? 1 : -1));
             updateImpactZone();
+        }
+    }
+    public void updateStrafe(){
+        if(strafeAmount<100){
+            strafeAmount+=0.03;
         }
     }
 }

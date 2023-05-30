@@ -33,14 +33,13 @@ public class GameField {
     private Pane uiRoot = new Pane();
     private Player player;
     private Rectangle playerHealthLine;
+    private Rectangle playerHealthLineStroke;
     private Bunker bunker;
-    private Rectangle PlayerHealthLine;
     private Rectangle strafeAmountLine;
+    private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
     private BotController botController = new BotController();
-    private int kickDelay = 0;
-
 
     public GameField() {
         initGame();
@@ -49,20 +48,16 @@ public class GameField {
     private void initGame() {
         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
 
-
         gameScene = new Scene(appRoot,WIDTH,HEIGHT);
 
         ImageView backgroundIV = new ImageView(new Image("Background+bunker.png"));
-
-
-
 
 
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
         platforms = Platform.generateAllBlocks(gameRoot);
 
 
-        player = new Player("5.png", 0, 0);
+        player = new Player("5.png", "Damage-pers.png",0, 0,40,10,5,0.15);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -74,18 +69,33 @@ public class GameField {
         });
 
         bunker = new Bunker(500,10,10,200,20);
-        bunker.getLineHP().setStrokeWidth(1);
-        bunker.getLineHP().setStroke(Color.BLACK);
+        bunker.getStrokeLineHP().setStrokeWidth(1);
+        bunker.getStrokeLineHP().setStroke(Color.BLACK);
+        bunker.getStrokeLineHP().setFill(Color.TRANSPARENT);
         bunker.getLineHP().setFill(Color.BLUE);
 
 
         playerHealthLine = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
         playerHealthLine.setFill(Color.RED);
-        playerHealthLine.setStrokeWidth(1);
-        playerHealthLine.setStroke(Color.BLACK);
 
-        strafeAmountLine = new Rectangle(600, 10, 2 * player.getStrafeAmount(), 20);
+        playerHealthLineStroke = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
+        playerHealthLineStroke.setStroke(Color.BLACK);
+        playerHealthLineStroke.setStrokeWidth(1);
+        playerHealthLineStroke.setFill(Color.TRANSPARENT);
+
+
+
+
+        strafeAmountLine = new Rectangle(10, bunker.getLineHP().getY()+bunker.getLineHP().getHeight(),
+                2 * player.getStrafeAmount(), 10);
         strafeAmountLine.setFill(Color.YELLOW);
+        strafeAmountLineStroke = new Rectangle(10, bunker.getLineHP().getY()+bunker.getLineHP().getHeight(),
+                3 * player.getStrafeAmount(), 10);
+        strafeAmountLine.setFill(Color.YELLOW);
+        strafeAmountLineStroke.setStrokeWidth(1);
+        strafeAmountLineStroke.setStroke(Color.BLACK);
+        strafeAmountLineStroke.setFill(Color.TRANSPARENT);
+
 
         Image image = new Image("pauseIcon.png");
         ImageView imageView = new ImageView(image);
@@ -101,19 +111,10 @@ public class GameField {
             }
         });
 
-        //спроба виклика менюхи з ESCAPE
-      /*  gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            public void handle(KeyEvent ke) {
-                if (ke.getCode() == KeyCode.ESCAPE) {
-                    openPauseMenu();
-                }
-            }
-        });*/
-
         uiRoot.getChildren().add(pauseButton);
-        uiRoot.getChildren().add(bunker.getLineHP());
-        uiRoot.getChildren().add(playerHealthLine);
-        uiRoot.getChildren().add(strafeAmountLine);
+        uiRoot.getChildren().addAll(bunker.getLineHP(),bunker.getStrokeLineHP());
+        uiRoot.getChildren().addAll(playerHealthLine,playerHealthLineStroke);
+        uiRoot.getChildren().addAll(strafeAmountLine,strafeAmountLineStroke);
 
         gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
@@ -134,11 +135,12 @@ public class GameField {
         botController.updateBot(gameRoot,player,bunker);
         updatePlayerHealthLine();
         updateStrafeAmountLine();
+        player.updateStrafe();
         bunker.updateLineHP();
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
-            player.jumpPlayer();
+            player.jump();
             player.spriteAnimation.setAnimation(2);
             player.spriteAnimation.play();
 
@@ -163,13 +165,7 @@ public class GameField {
         }
         if (isPressed(KeyCode.A) && isPressed(KeyCode.SHIFT) && player.getTranslateX() >= 5 && player.getStrafeAmount() > 0) {
             player.strafe(false);
-            /*if (kickDelay <= 0) {
-                player.kick(botController.getBotList());
-                kickDelay = 7;
-            }
-            else {
-                kickDelay-=1;
-            }*/
+
             player.setStrafeAmount(player.getStrafeAmount()-1);
             if (!isPlayerRunning) {
                 Sounds.getInstance().startRunning();
@@ -200,10 +196,10 @@ public class GameField {
             Sounds.getInstance().stopRunning();
             isPlayerRunning = false;
         }
-        if (player.playerVelocity.getY() < 6) {
-            player.playerVelocity = player.playerVelocity.add(0, 1);
+        if (player.velocity.getY() < 6) {
+            player.velocity = player.velocity.add(0, 1);
         }
-        player.moveY((int) player.playerVelocity.getY());
+        player.moveY((int) player.velocity.getY());
 
 
         if(isPressed(KeyCode.K)) {
@@ -215,10 +211,10 @@ public class GameField {
     }
     public void updatePlayerHealthLine(){
         playerHealthLine.setWidth(2 * player.getHP());
-        playerHealthLine.setX(bunker.getLineHP().getX()+bunker.getLineHP().getWidth());
+        //playerHealthLine.setX(bunker.getLineHP().getX()+bunker.getLineHP().getWidth());
     }
     public void updateStrafeAmountLine(){
-        strafeAmountLine.setWidth(2 * player.getStrafeAmount());
+        strafeAmountLine.setWidth(3 * player.getStrafeAmount());
     }
     private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);
