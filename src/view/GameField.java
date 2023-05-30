@@ -46,7 +46,7 @@ public class GameField {
     private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
-    private BotController botController = new BotController(25);
+    private BotController botController = new BotController(30);
     private   AnimationTimer timer;
 
     public GameField() {
@@ -66,7 +66,7 @@ public class GameField {
 
 
         player = new Player("5.png", "Damage-pers.png",0, 0,40,
-                10,5,0.15,100,400);
+                10,5,0.15,100,400,5);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {

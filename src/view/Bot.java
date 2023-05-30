@@ -24,7 +24,7 @@ public class Bot extends Player{
     }
 
     public Bot(String urlImgSkin, String urlImgDamageArea, int x, int y, int DAMAGE,int SIZE) {
-        super(urlImgSkin, urlImgDamageArea, x, y,SIZE,DAMAGE,1,1,20,500);
+        super(urlImgSkin, urlImgDamageArea, x, y,SIZE,DAMAGE,1,1,20,500,4);
         HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, SIZE*defaultHP/HP, 5);
         HPLine.setFill(Color.RED);
         getChildren().add(this.HPLine);
@@ -59,6 +59,7 @@ public class Bot extends Player{
             }
             if(currentImpactZone.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
                 bunker.setBunkerHP(bunker.getBunkerHP() - DAMAGE);
+                System.out.println(bunker.getBunkerHP());
             }
             paneForImpactZoneAnimation.setVisible(false);
         });

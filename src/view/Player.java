@@ -43,7 +43,7 @@ public class Player extends Pane {
 
 
     public Player(String urlImgSkin,String urlImgDamageArea, int x, int y, int SIZE, int DAMAGE,int SPEED,
-                  double DELAY_BETWEEN_ATTACKS, int hp,int ANIMATION_SPEED) {
+                  double DELAY_BETWEEN_ATTACKS, int hp,int ANIMATION_SPEED, int countAnimation) {
         this.ANIMATION_SPEED = 500;
         this.currentHP = hp;
         this.SIZE = SIZE;
@@ -60,7 +60,7 @@ public class Player extends Pane {
 
 
         spriteAnimation = new SpriteAnimation(this.characterSkinImageView, Duration.millis(ANIMATION_SPEED), SIZE, SIZE,
-                5, 4, 10, 10);
+                countAnimation, 4, 10, 10);
         getChildren().add(characterSkinImageView);
     }
 

@@ -62,7 +62,7 @@ public class BotController {
 
                 if(bot.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
                     bot.isBotRunning = false;
-                    bot.attack(player,bunker);
+                    bot.performAttack(player,bunker);
                 }
             }
             if (playerBotHeightDifference <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.SIZE / 2 - bot.getTranslateX() - bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.SIZE / 2 + bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS))) {

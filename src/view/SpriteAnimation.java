@@ -31,7 +31,6 @@ public class SpriteAnimation extends Transition {
 
     public void setAnimation(int numbAnimation) {
         this.currentOffsetY = offsetY + numbAnimation*(height+offsetY);
-        //System.out.println("y: "+currentOffsetY);
     }
     protected void interpolate(double k) {
         int index = Math.min((int) Math.floor(k * count), count - 1);
