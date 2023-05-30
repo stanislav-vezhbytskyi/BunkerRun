@@ -59,9 +59,13 @@ public class ViewManager {
         return storeManager;
      }
 
+    public void setMode(Mode aMode) {
+        mode = aMode;
+    }
     public Mode getMode() {
         return mode;
     }
+
 
     public void setMainScene(Scene aScene) {
         mainStage.setScene(aScene);
