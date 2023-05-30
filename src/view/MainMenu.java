@@ -1,11 +1,22 @@
 package view;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 import model.BunkerRunButton;
 import model.BackgroundMusic;
 
@@ -14,16 +25,72 @@ import static view.ViewManager.WIDTH;
 
 public class MainMenu {
     //private BackgroundMusic mainTheme = new BackgroundMusic("src/music/song1.mp3");
-    private AnchorPane menuPane;
+    private Pane menuPane;
     private Scene menuScene;
+    private StackPane contentPane;
 
     public MainMenu() {
-        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+       /* BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
         BackgroundMusic.getInstance().play();
         menuPane = new AnchorPane();
         menuScene = new Scene(menuPane, WIDTH, HEIGHT);
         createBackground();
+        createButtons(); */
+        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+        BackgroundMusic.getInstance().play();
+
+        menuPane = new Pane();
+
+        Label label = new Label("Project 2023");
+        label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
+        label.setTextFill(Color.WHITE);
+        label.setPrefWidth(1200);
+        label.setLayoutY(650);
+        label.setAlignment(Pos.CENTER);
+
+       Media media1 = new Media(MainMenu.class.getResource("/resources/background.mp4").toExternalForm());
+        MediaPlayer mediaPlayer1 = new MediaPlayer(media1);
+
+        MediaView mediaView1 = new MediaView(mediaPlayer1);
+        mediaView1.setFitWidth(WIDTH);
+        mediaView1.setFitHeight(HEIGHT);
+        menuPane.getChildren().add(mediaView1);
+
+        mediaPlayer1.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                Media media2 = new Media(MainMenu.class.getResource("/resources/movingBackground.mp4").toExternalForm());
+
+                MediaPlayer mediaPlayer2 = new MediaPlayer(media2);
+                mediaPlayer2.setCycleCount(MediaPlayer.INDEFINITE);
+
+                Label label2 = new Label("Project 2023");
+                label2.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
+                label2.setTextFill(Color.WHITE);
+                label2.setPrefWidth(1200);
+                label2.setLayoutY(650);
+                label2.setAlignment(Pos.CENTER);
+
+                MediaView mediaView2 = new MediaView(mediaPlayer2);
+                mediaView2.setFitWidth(WIDTH);
+                mediaView2.setFitHeight(HEIGHT);
+
+                menuPane.getChildren().addAll(mediaView2);
+                menuPane.getChildren().add(label2);
+                createButtons();
+
+                mediaPlayer2.play();
+            }
+        });
+
+        mediaPlayer1.play();
+
         createButtons();
+        menuPane.getChildren().addAll(label);
+
+        menuScene = new Scene(menuPane, WIDTH, HEIGHT);
+        createButtons();
+
     }
 
     private void createBackground() {
