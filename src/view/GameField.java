@@ -13,7 +13,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.BackgroundMusic;
+import model.SkinService;
 
+import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -69,7 +71,9 @@ public class GameField {
             }
         }
 
-        player = new Player("PlayerSprite1.png",0,0);
+        String imageUrl = SkinService.getPickedSkinSprite();
+        player = new Player(imageUrl,0,0);
+//        player = new Player("PlayerSprite1.png",0,0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {

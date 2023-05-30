@@ -39,7 +39,6 @@ public class MainMenu {
         menuPane.getChildren().add(startButton);
 
         startButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -55,6 +54,17 @@ public class MainMenu {
         storeButton.setLayoutX(395);
         storeButton.setLayoutY(295);
         menuPane.getChildren().add(storeButton);
+
+        storeButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(event.getButton().equals(MouseButton.PRIMARY)) {
+                    storeButton.setButtonReleasedStyle();
+                    BackgroundMusic.getInstance().stop();
+                    ViewManager.getInstance().getStoreManager().openStore();
+                }
+            }
+        });
 
         BunkerRunButton settingsButton = new BunkerRunButton("НАЛАШТУВАННЯ", 0);
         settingsButton.setLayoutX(395);
@@ -72,7 +82,6 @@ public class MainMenu {
         menuPane.getChildren().add(exitButton);
 
         exitButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
