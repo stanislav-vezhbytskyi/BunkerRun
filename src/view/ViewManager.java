@@ -75,7 +75,7 @@ public class ViewManager {
         Sounds.getInstance().stopSounds();
 
         if (mode == Mode.GAME) {
-            //getGameManager().stopGame();
+            getGameManager().stopGame();
             gameManager = null;
         }
         if (mode != Mode.STORE && mode != Mode.SETTINGS) {

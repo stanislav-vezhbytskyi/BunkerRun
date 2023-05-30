@@ -61,6 +61,7 @@ public class GameField {
     }
 
     private void initGame() {
+        ViewManager.getInstance().setMode(Mode.GAME);
         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
 
         gameScene = new Scene(appRoot,WIDTH,HEIGHT);
@@ -125,11 +126,11 @@ public class GameField {
         pauseButton.setMaxWidth(30);
         pauseButton.setMaxHeight(30);
         pauseButton.setTranslateX(1160);
-        GameField gameField = this;
+       // GameField gameField = this;
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                openPauseMenu(gameField);
+                openPauseMenu(ViewManager.getInstance().getGameManager());
                 isGameOnPause = true;
             }
         });
@@ -248,6 +249,10 @@ public class GameField {
 
     public void startGame() {
         ViewManager.getInstance().setMainScene(gameScene);
+    }
+
+    public void stopGame() {
+        timer.stop();
     }
     public void endGame(boolean isWin){
         Label text = new Label( isWin ? "win" : "you are lose");
