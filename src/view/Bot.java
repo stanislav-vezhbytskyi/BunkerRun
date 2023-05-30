@@ -1,24 +1,16 @@
 package view;
 
 import javafx.animation.PauseTransition;
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
-import java.util.ArrayList;
 
 public class Bot extends Player{
     public static final int BOT_IMPACT_RADIUS = 100;
     public boolean isBotRunning = true;
     private final int defaultHP = 20;
     private int HP = 20;
-    private Rectangle HPLine ;
+    private Rectangle HPLine;
     private int viewingDistance = 400;
     public void setHP(int HP){
         this.HP = HP;
@@ -32,7 +24,7 @@ public class Bot extends Player{
     }
 
     public Bot(String urlImgSkin, String urlImgDamageArea, int x, int y, int DAMAGE,int SIZE) {
-        super(urlImgSkin, urlImgDamageArea, x, y,SIZE,DAMAGE,1,1);
+        super(urlImgSkin, urlImgDamageArea, x, y,SIZE,DAMAGE,1,1,20,500);
         HPLine = new Rectangle(this.getTranslateX(), this.getTranslateY() -10, SIZE*defaultHP/HP, 5);
         HPLine.setFill(Color.RED);
         getChildren().add(this.HPLine);

@@ -14,9 +14,17 @@ public class BotController {
     private int random;
     private final int MAX_BOT_NUMBER = 10;
     private final int BOT_SPAWN_FREQUENCY = 900;
+    private int numberOfBotsOnLevel;
+    public BotController(int numberOfBotsOnLevel){
+        this.numberOfBotsOnLevel = numberOfBotsOnLevel;
+    }
+
+    public boolean botsAreOver(){
+        return numberOfBotsOnLevel<=0;
+    }
 
     private void createBot(Pane gameRoot) {
-        if (botList.size() < MAX_BOT_NUMBER) {
+        if (botList.size() < MAX_BOT_NUMBER&&numberOfBotsOnLevel-botList.size()>0) {
             random = rand.nextInt(BOT_SPAWN_FREQUENCY);
 
             if (random == 0 || random == 1 || random == 2) {
@@ -92,8 +100,10 @@ public class BotController {
         while (iterator.hasNext()) {
             Bot bot = iterator.next();
             if (bot.getHP() <= 0) {
+                numberOfBotsOnLevel--;
                 gameRoot.getChildren().remove(bot);
                 iterator.remove();
+                //
                 if (player.getStrafeAmount() >= 75)
                     player.setStrafeAmount(100);
                 else {

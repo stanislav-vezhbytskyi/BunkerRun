@@ -12,7 +12,7 @@ public class Bunker {
         this.bunkerHP = bunkerHP;
         this.lineHP = new Rectangle(x, y, width, height);
         strokeLineHP = new Rectangle(x, y, width, height);
-        bunkerArea = new Rectangle(0,0,300,ViewManager.HEIGHT);
+        bunkerArea = new Rectangle(0,0,250,ViewManager.HEIGHT);
     }
 
     public void setBunkerHP(int newHP) {

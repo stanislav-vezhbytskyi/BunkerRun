@@ -1,17 +1,24 @@
 package view;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import model.BackgroundMusic;
 import model.Sounds;
 
@@ -39,7 +46,8 @@ public class GameField {
     private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
-    private BotController botController = new BotController();
+    private BotController botController = new BotController(25);
+    private   AnimationTimer timer;
 
     public GameField() {
         initGame();
@@ -57,7 +65,8 @@ public class GameField {
         platforms = Platform.generateAllBlocks(gameRoot);
 
 
-        player = new Player("5.png", "Damage-pers.png",0, 0,40,10,5,0.15);
+        player = new Player("5.png", "Damage-pers.png",0, 0,40,
+                10,5,0.15,100,400);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -68,7 +77,7 @@ public class GameField {
             }
         });
 
-        bunker = new Bunker(500,10,10,200,20);
+        bunker = new Bunker(500,10,10,250,20);
         bunker.getStrokeLineHP().setStrokeWidth(1);
         bunker.getStrokeLineHP().setStroke(Color.BLACK);
         bunker.getStrokeLineHP().setFill(Color.TRANSPARENT);
@@ -121,7 +130,7 @@ public class GameField {
 
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         gameScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 update();
@@ -137,6 +146,13 @@ public class GameField {
         updateStrafeAmountLine();
         player.updateStrafe();
         bunker.updateLineHP();
+        if(botController.botsAreOver()){
+            endGame(true);
+        }
+        if(bunker.getBunkerHP()<=0||player.getHP()<=0){
+            endGame(false);
+        }
+
 
 
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
@@ -148,13 +164,7 @@ public class GameField {
 
         if (isPressed(KeyCode.D) && isPressed(KeyCode.SHIFT) && player.getTranslateX() + 40 <= levelWidth - 5 && player.getStrafeAmount() > 0) {
             player.strafe(true);
-            /*if (kickDelay <= 0) {
-                player.kick(botController.getBotList());
-                kickDelay = 7;
-            }
-            else {
-                kickDelay-=1;
-            }*/
+
             player.setStrafeAmount(player.getStrafeAmount()-1);
             if (!isPlayerRunning) {
                 Sounds.getInstance().startRunning();
@@ -211,7 +221,6 @@ public class GameField {
     }
     public void updatePlayerHealthLine(){
         playerHealthLine.setWidth(2 * player.getHP());
-        //playerHealthLine.setX(bunker.getLineHP().getX()+bunker.getLineHP().getWidth());
     }
     public void updateStrafeAmountLine(){
         strafeAmountLine.setWidth(3 * player.getStrafeAmount());
@@ -222,5 +231,25 @@ public class GameField {
 
     public void startGame() {
         ViewManager.getInstance().setMainScene(gameScene);
+    }
+    public void endGame(boolean isWin){
+        Label text = new Label( isWin ? "win" : "you are lose");
+        text.setFont(Font.font(150));
+        text.setTextFill(isWin?Color.YELLOW:Color.RED);
+        text.setAlignment(Pos.CENTER);
+        text.setPrefSize(1200,675);
+
+        appRoot.getChildren().add(text);
+
+        Sounds.getInstance().stopRunning();
+
+        timer.stop();
+
+        PauseTransition delay = new PauseTransition(Duration.seconds(4));
+        delay.setOnFinished(event -> {
+            BackgroundMusic.getInstance().stop();
+            ViewManager.getInstance().switchToMainMenu();
+        });
+        delay.play();
     }
 }

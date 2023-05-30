@@ -17,9 +17,10 @@ import java.util.ArrayList;
 public class Player extends Pane {
     public final int SIZE;
     public static final int IMPACT_RADIUS = 100;
-    public static int DAMAGE;
+    public final int DAMAGE;
     private final double DELAY_BETWEEN_ATTACKS;
     private final int SPEED;
+    private final int ANIMATION_SPEED;
     private final int JUMP_HEIGHT = -23;
     private ImageView characterSkinImageView;
     Rectangle rightImpactZone;
@@ -32,7 +33,7 @@ public class Player extends Pane {
     boolean looksToRight = true;
     private long timeLastAttack = 0;
     private int currentHP = 100;
-    private double strafeAmount = 100;
+    private double strafeAmount =100;
     public double getStrafeAmount(){
         return  strafeAmount;
     }
@@ -41,7 +42,10 @@ public class Player extends Pane {
     }
 
 
-    public Player(String urlImgSkin,String urlImgDamageArea, int x, int y, int SIZE, int DAMAGE,int SPEED, double DELAY_BETWEEN_ATTACKS) {
+    public Player(String urlImgSkin,String urlImgDamageArea, int x, int y, int SIZE, int DAMAGE,int SPEED,
+                  double DELAY_BETWEEN_ATTACKS, int hp,int ANIMATION_SPEED) {
+        this.ANIMATION_SPEED = 500;
+        this.currentHP = hp;
         this.SIZE = SIZE;
         this.DAMAGE = DAMAGE;
         this.SPEED = SPEED;
@@ -55,7 +59,7 @@ public class Player extends Pane {
         initImpactZone(urlImgDamageArea,x, y);
 
 
-        spriteAnimation = new SpriteAnimation(this.characterSkinImageView, Duration.millis(500), SIZE, SIZE,
+        spriteAnimation = new SpriteAnimation(this.characterSkinImageView, Duration.millis(ANIMATION_SPEED), SIZE, SIZE,
                 5, 4, 10, 10);
         getChildren().add(characterSkinImageView);
     }
@@ -135,7 +139,12 @@ public class Player extends Pane {
 
 
     public void setHP(int HP) {
-        this.currentHP = HP;
+        if(HP>=0){
+            this.currentHP = HP;
+        }
+       else {
+           this.currentHP = 0;
+       }
     }
 
     public int getHP() {
