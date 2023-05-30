@@ -127,7 +127,6 @@ public class MainMenu {
             public void handle(MouseEvent event) {
                 if(event.getButton().equals(MouseButton.PRIMARY)) {
                     storeButton.setButtonReleasedStyle();
-                    BackgroundMusic.getInstance().stop();
                     ViewManager.getInstance().getStoreManager().openStore();
                 }
             }

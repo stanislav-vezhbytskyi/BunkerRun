@@ -11,6 +11,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import model.Skin;
 import model.SkinService;
+import model.Sounds;
+
 import java.util.ArrayList;
 
 import static view.ViewManager.HEIGHT;
@@ -166,6 +168,7 @@ public class Store {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
+                    Sounds.getInstance().clickButtonSound();
                     ViewManager.getInstance().switchToMainMenu();
                 }
             }
@@ -173,6 +176,7 @@ public class Store {
         storePane.getChildren().add(backButton);
     }
     public void openStore() {
+        ViewManager.getInstance().setMode(Mode.STORE);
         ViewManager.getInstance().setMainScene(storeScene);
     }
 }

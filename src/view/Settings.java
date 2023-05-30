@@ -91,7 +91,7 @@ public class Settings {
     }
 
     public void createSliders() {
-        musicLabel = new Label("Гучність фонової музики");
+        musicLabel = new Label("Фонова музика");
         musicLabel.setLayoutX(80);
         musicLabel.setLayoutY(200);
         musicLabel.setTextFill(Color.WHITESMOKE);
@@ -110,7 +110,7 @@ public class Settings {
                 BackgroundMusic.getInstance().setVolume(musicVolumeSlider.getValue()/100);
             }
         });
-        soundsLabel = new Label("Гучність звуків у грі");
+        soundsLabel = new Label("Звуки в грі");
         soundsLabel.setLayoutX(80);
         soundsLabel.setLayoutY(300);
         soundsLabel.setTextFill(Color.WHITESMOKE);
