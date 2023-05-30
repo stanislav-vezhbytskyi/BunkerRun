@@ -33,7 +33,8 @@ public class Player extends Pane {
     boolean looksToRight = true;
     private long timeLastAttack = 0;
     private int currentHP = 100;
-    private double strafeAmount =100;
+    private double strafeAmount = 100;
+    private int count;
     public double getStrafeAmount(){
         return  strafeAmount;
     }
@@ -43,13 +44,14 @@ public class Player extends Pane {
 
 
     public Player(String urlImgSkin,String urlImgDamageArea, int x, int y, int SIZE, int DAMAGE,int SPEED,
-                  double DELAY_BETWEEN_ATTACKS, int hp,int ANIMATION_SPEED, int countAnimation) {
+                  double DELAY_BETWEEN_ATTACKS, int hp,int ANIMATION_SPEED, int count) {
         this.ANIMATION_SPEED = 500;
         this.currentHP = hp;
         this.SIZE = SIZE;
         this.DAMAGE = DAMAGE;
         this.SPEED = SPEED;
         this.DELAY_BETWEEN_ATTACKS = DELAY_BETWEEN_ATTACKS;
+        this.count = count;
         Image image = new Image(urlImgSkin);
         characterSkinImageView = new ImageView(image);
         characterSkinImageView.setFitHeight(this.SIZE);
@@ -60,7 +62,7 @@ public class Player extends Pane {
 
 
         spriteAnimation = new SpriteAnimation(this.characterSkinImageView, Duration.millis(ANIMATION_SPEED), SIZE, SIZE,
-                countAnimation, 4, 10, 10);
+              count  , 4, 10, 10);
         getChildren().add(characterSkinImageView);
     }
 

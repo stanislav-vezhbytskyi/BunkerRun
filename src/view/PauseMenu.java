@@ -9,13 +9,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import model.BackgroundMusic;
 import model.BunkerRunButton;
 
+import static view.ViewManager.getInstance;
 
 public class PauseMenu {
-    public static void openPauseMenu(){
+    public static void openPauseMenu(GameField gameField){
         Stage stage = new Stage();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                gameField.setGameOnPause(false);
+            }
+        });
+
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initStyle(StageStyle.UNDECORATED);
 
@@ -30,6 +39,7 @@ public class PauseMenu {
         backToGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                gameField.setGameOnPause(false);
                 stage.close();
             }
         });

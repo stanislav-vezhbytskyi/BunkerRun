@@ -49,6 +49,10 @@ public class GameField {
     private BotController botController = new BotController(30);
     private   AnimationTimer timer;
 
+    private boolean isGameOnPause = false;
+    public void setGameOnPause(boolean isGameOnPause) {
+        this.isGameOnPause = isGameOnPause;
+    }
     public GameField() {
         initGame();
     }
@@ -66,7 +70,7 @@ public class GameField {
 
 
         player = new Player("5.png", "Damage-pers.png",0, 0,40,
-                10,5,0.15,100,400,5);
+                10,5,0.15,100,400,4);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -113,10 +117,12 @@ public class GameField {
         pauseButton.setMaxWidth(30);
         pauseButton.setMaxHeight(30);
         pauseButton.setTranslateX(1160);
+        GameField gameField = this;
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                openPauseMenu();
+                openPauseMenu(gameField);
+                isGameOnPause = true;
             }
         });
 
@@ -133,7 +139,9 @@ public class GameField {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                update();
+                if (!isGameOnPause){
+                    update();
+                }
             }
         };
         timer.start();
@@ -216,7 +224,7 @@ public class GameField {
             player.performAttack(botController.getBotList());
         }
         if(isPressed(KeyCode.O)) {
-            System.out.println("X: " + player.getTranslateX() + "; Y: " + player.getTranslateY() + ".");
+            System.out.println("X: " + player.getTranslateX() + "; Y: " + player.getTranslateY() + "; DAMAGE: " + player.DAMAGE + ".");
         }
     }
     public void updatePlayerHealthLine(){
