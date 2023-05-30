@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import model.Sounds;
 
-
 public class Player extends Pane {
     public static final int PLAYER_SIZE = 40;
     String urlImg = new String();

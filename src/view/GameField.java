@@ -14,7 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.BackgroundMusic;
 import model.Sounds;
+import model.SkinService;
 
+import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,6 +41,7 @@ public class GameField {
 
     private void initGame() {
         BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
+        //BackgroundMusic.getInstance().play();
       /*  gamePane = new AnchorPane();
         gameScene = new Scene(gamePane, WIDTH, HEIGHT);
         Image backgroundImage = new Image("resources/blackBackground.jpg", 1200, 675, false, true);
@@ -71,7 +74,9 @@ public class GameField {
             }
         }
 
-        player = new Player("PlayerSprite1.png", 0, 0);
+        String imageUrl = SkinService.getPickedSkinSprite();
+        player = new Player(imageUrl,0,0);
+//        player = new Player("PlayerSprite1.png",0,0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -84,6 +89,7 @@ public class GameField {
 
         Rectangle HealthLine = new Rectangle(10, 10, 2 * player.getHP(), 20);
         HealthLine.setFill(Color.RED);
+
 
 
         Image image = new Image("pauseIcon.png");
@@ -108,6 +114,9 @@ public class GameField {
                 }
             }
         });*/
+
+
+
 
         uiRoot.getChildren().add(stopButton);
         uiRoot.getChildren().add(HealthLine);
@@ -138,7 +147,6 @@ public class GameField {
             player.jumpPlayer();
             player.spriteAnimation.setAnimation(2);
             player.spriteAnimation.play();
-
         }
         if (isPressed(KeyCode.A) && player.getTranslateX() >= 5) {
             player.moveX(false);
