@@ -24,12 +24,14 @@ public class Sounds {
         return instance;
     }
 
-    private Media runningMedia = new Media(new File("src/music/running.mp3").toURI().toString());
+    private Media runningMedia = new Media(new File("src/resources/running.mp3").toURI().toString());
     private MediaPlayer runningPlayer = new MediaPlayer(runningMedia);
-    private Media jumpMedia = new Media(new File("src/music/jump.mp3").toURI().toString());
+    private Media jumpMedia = new Media(new File("src/resources/jump.mp3").toURI().toString());
     private MediaPlayer jumpPlayer = new MediaPlayer(jumpMedia);
-    private Media buttonMedia = new Media(new File("src/music/buttonSound.mp3").toURI().toString());
+    private Media buttonMedia = new Media(new File("src/resources/buttonSound.mp3").toURI().toString());
     private MediaPlayer buttonPlayer = new MediaPlayer(buttonMedia);
+    private Media attackMedia = new Media(new File("src/resources/epicWoosh.mp3").toURI().toString());
+    private MediaPlayer attackPlayer = new MediaPlayer(attackMedia);
     private double currentVolume;
 
     public void startRunning() {
@@ -43,22 +45,21 @@ public class Sounds {
     }
 
     public void stopSounds() {
-
         runningPlayer.stop();
         jumpPlayer.stop();
-        /*
-        runningPlayer = new MediaPlayer(runningMedia);
-        runningPlayer.setOnEndOfMedia(new Runnable() {
-            public void run() {
-                runningPlayer.seek(Duration.ZERO);
-            }
-        });*/
     }
 
     public void jump() {
         if (jumpPlayer.getCurrentTime().greaterThan(new Duration(200)) || jumpPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
             jumpPlayer.stop();
             jumpPlayer.play();
+        }
+    }
+
+    public void attack() {
+        if (attackPlayer.getCurrentTime().greaterThan(new Duration(200)) || attackPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
+            attackPlayer.stop();
+            attackPlayer.play();
         }
     }
 

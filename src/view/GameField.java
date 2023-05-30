@@ -62,7 +62,7 @@ public class GameField {
 
     private void initGame() {
         ViewManager.getInstance().setMode(Mode.GAME);
-        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
+        BackgroundMusic.getInstance().startSong("src/resources/songForFighting.mp3");
 
         gameScene = new Scene(appRoot,WIDTH,HEIGHT);
 

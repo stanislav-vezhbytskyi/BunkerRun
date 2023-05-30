@@ -36,7 +36,7 @@ public class MainMenu {
         menuScene = new Scene(menuPane, WIDTH, HEIGHT);
         createBackground();
         createButtons(); */
-        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+        BackgroundMusic.getInstance().startSong("src/resources/song1.mp3");
         BackgroundMusic.getInstance().play();
 
         menuPane = new Pane();
