@@ -20,7 +20,7 @@ public class SpriteAnimation extends Transition {
                            int offsetX, int offsetY) {
         this.imageView = imageView;
         this.count = count;
-        this.columns = columns; //frames
+        this.columns = columns;
         this.width = width;
         this.height = height;
         this.offsetX = offsetX;

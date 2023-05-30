@@ -106,7 +106,7 @@ public class GameField {
         strafeAmountLineStroke.setFill(Color.TRANSPARENT);
 
 
-        Image image = new Image("pauseIcon.png");
+        Image image = new Image("img_2.png");
         ImageView imageView = new ImageView(image);
 
         Button pauseButton = new Button("", imageView);
