@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.BackgroundMusic;
+import model.Sounds;
 
 public class ViewManager {
     private static ViewManager instance;
@@ -22,12 +23,13 @@ public class ViewManager {
     private Stage mainStage;
     private MainMenu mainMenu = new MainMenu();
     private GameField gameManager;
-    private BackgroundMusic backgroundMusic;
+    private Settings settings = new Settings();
     private Mode mode;
 
     public ViewManager() {
         mainPane = new AnchorPane();
         mainScene = mainMenu.getScene();
+        mode = Mode.MAINMENU;
         mainStage = new Stage();
         mainStage.setScene(mainScene);
         mainStage.setResizable(false);
@@ -35,24 +37,40 @@ public class ViewManager {
     }
 
     public GameField getGameManager() {
-        gameManager = new GameField();
-        return  gameManager;
+        if (gameManager == null) {
+            gameManager = new GameField();
+        }
+        return gameManager;
     }
 
     public void setMode(Mode aMode) {
         mode = aMode;
     }
 
-    public Mode getMode() {return mode;}
+    public Mode getMode() {
+        return mode;
+    }
 
     public void setMainScene(Scene aScene) {
         mainStage.setScene(aScene);
     }
 
     public void switchToMainMenu() {
-        BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
-       // BackgroundMusic.getInstance().play();
+        Sounds.getInstance().stopSounds();
+
+        if (mode == Mode.GAME) {
+            getGameManager().stopGame();
+            gameManager = null;
+        }
+        if (mode != Mode.STORE && mode != Mode.SETTINGS) {
+            BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+        }
         mainStage.setScene(mainMenu.getScene());
+    }
+
+    public void goToSettings() {
+        mode = Mode.SETTINGS;
+        mainStage.setScene(settings.getSettingsScene());
     }
 
     public Stage getMainStage() {

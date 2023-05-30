@@ -15,14 +15,14 @@ public class BackgroundMusic {
         }
         return instance;
     }
-
+    private double currentVolume = 1;
     private Media media;
     private MediaPlayer mediaPlayer;
 
     public void startSong(String fileName) {
         media = new Media(new File(fileName).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setVolume(0.5);
+        mediaPlayer.setVolume(currentVolume);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setOnEndOfMedia(new Runnable() {
             public void run() {
@@ -32,6 +32,10 @@ public class BackgroundMusic {
         mediaPlayer.play();
     }
 
+    public void setVolume(Double aVolume) {
+        mediaPlayer.setVolume(aVolume);
+        currentVolume = aVolume;
+    }
 
     public void play() {
         mediaPlayer.play();
@@ -40,4 +44,5 @@ public class BackgroundMusic {
     public void stop() {
         mediaPlayer.stop();
     }
+
 }
