@@ -20,7 +20,7 @@ public class ViewManager {
     private static Coins coins;
 
     public static Coins getCoins() {
-        if(coins == null)
+        if (coins == null)
             coins = new Coins();
         return coins;
     }
@@ -54,14 +54,16 @@ public class ViewManager {
         }
         return gameManager;
     }
-     public Store getStoreManager() {
+
+    public Store getStoreManager() {
         storeManager = new Store();
         return storeManager;
-     }
+    }
 
     public void setMode(Mode aMode) {
         mode = aMode;
     }
+
     public Mode getMode() {
         return mode;
     }
@@ -88,6 +90,7 @@ public class ViewManager {
         mode = Mode.SETTINGS;
         mainStage.setScene(settings.getSettingsScene());
     }
+
 
     public Stage getMainStage() {
         return mainStage;

@@ -1,6 +1,7 @@
 package view;
 
 import javafx.scene.layout.Pane;
+import model.Coins;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -102,6 +103,7 @@ public class BotController {
             if (bot.getHP() <= 0) {
                 numberOfBotsOnLevel--;
                 gameRoot.getChildren().remove(bot);
+                ViewManager.getCoins().addCoinsForKillingBot();
                 iterator.remove();
                 //
                 if (player.getStrafeAmount() >= 75)

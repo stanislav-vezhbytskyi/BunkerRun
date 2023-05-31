@@ -4,34 +4,23 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 import model.BackgroundMusic;
 import model.Sounds;
 import model.SkinService;
-
-import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
-
 import static view.PauseMenu.openPauseMenu;
-import static view.Platform.BLOCK_SIZE;
-import static view.ViewManager.HEIGHT;
-import static view.ViewManager.WIDTH;
+import static view.ViewManager.*;
 
 public class GameField {
     private Scene gameScene;
@@ -49,8 +38,8 @@ public class GameField {
     private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
-    private BotController botController = new BotController(30);
-    private   AnimationTimer timer;
+    private BotController botController = new BotController(1);
+    private AnimationTimer timer;
 
     private boolean isGameOnPause = false;
     public void setGameOnPause(boolean isGameOnPause) {
@@ -72,12 +61,9 @@ public class GameField {
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
         platforms = Platform.generateAllBlocks(gameRoot);
 
-
-        player = new Player("5.png", "Damage-pers.png",0, 0,40,
+        String urlSkin = SkinService.getPickedSkinSprite();
+        player = new Player(urlSkin, "Damage-pers.png",0, 0,40,
                 10,5,0.15,100,400,4);
-        /*!!!!!!!!!*/String imageUrl = SkinService.getPickedSkinSprite();
-        //player = new Player(imageUrl,0,0);
-//        player = new Player("PlayerSprite1.png",0,0);
         player.setTranslateY(0);
         player.setTranslateX(0);
         player.translateXProperty().addListener((obs, old, newValue) -> {
@@ -170,8 +156,6 @@ public class GameField {
             endGame(false);
         }
 
-
-
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
             player.jump();
             player.spriteAnimation.setAnimation(2);
@@ -232,9 +216,6 @@ public class GameField {
         if(isPressed(KeyCode.K)) {
             player.performAttack(botController.getBotList());
         }
-        if(isPressed(KeyCode.O)) {
-            System.out.println("X: " + player.getTranslateX() + "; Y: " + player.getTranslateY() + "; DAMAGE: " + player.DAMAGE + ".");
-        }
     }
     public void updatePlayerHealthLine(){
         playerHealthLine.setWidth(2 * player.getHP());
@@ -255,13 +236,17 @@ public class GameField {
         timer.stop();
     }
     public void endGame(boolean isWin){
-        Label text = new Label( isWin ? "win" : "you are lose");
-        text.setFont(Font.font(150));
-        text.setTextFill(isWin?Color.YELLOW:Color.RED);
-        text.setAlignment(Pos.CENTER);
-        text.setPrefSize(1200,675);
 
-        appRoot.getChildren().add(text);
+        if (isWin) {
+            ViewManager.getCoins().saveCoinsForVictory();
+        } else {
+            getCoins().resetCoinsForGame();
+        }
+
+        Image endGameImage = new Image(isWin?"win.png":"lose.png");
+        ImageView endGameIV = new ImageView(endGameImage);
+
+        appRoot.getChildren().add(endGameIV);
 
         Sounds.getInstance().stopRunning();
 

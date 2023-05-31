@@ -1,5 +1,6 @@
 package view;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -152,6 +153,13 @@ public class MainMenu {
         aboutButton.setLayoutX(395);
         aboutButton.setLayoutY(445);
         menuPane.getChildren().add(aboutButton);
+
+        aboutButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                aboutButton.setButtonReleasedStyle();
+            }
+        });
 
         BunkerRunButton exitButton = new BunkerRunButton("ВИЙТИ", 2);
         exitButton.setLayoutX(395);
