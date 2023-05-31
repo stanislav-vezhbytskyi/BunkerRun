@@ -4,5 +4,6 @@ public enum Mode {
     MAINMENU,
     GAME,
     STORE,
-    SETTINGS
+    SETTINGS,
+    CONTACTS
 }

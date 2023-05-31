@@ -25,18 +25,11 @@ import static view.ViewManager.HEIGHT;
 import static view.ViewManager.WIDTH;
 
 public class MainMenu {
-    //private BackgroundMusic mainTheme = new BackgroundMusic("src/music/song1.mp3");
     private Pane menuPane;
     private Scene menuScene;
     private StackPane contentPane;
 
     public MainMenu() {
-       /* BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
-        BackgroundMusic.getInstance().play();
-        menuPane = new AnchorPane();
-        menuScene = new Scene(menuPane, WIDTH, HEIGHT);
-        createBackground();
-        createButtons(); */
         BackgroundMusic.getInstance().startSong("src/resources/song1.mp3");
         BackgroundMusic.getInstance().play();
 
@@ -154,10 +147,11 @@ public class MainMenu {
         aboutButton.setLayoutY(445);
         menuPane.getChildren().add(aboutButton);
 
-        aboutButton.setOnAction(new EventHandler<ActionEvent>() {
+        aboutButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(MouseEvent event) {
                 aboutButton.setButtonReleasedStyle();
+                ViewManager.getInstance().goToContacts();
             }
         });
 

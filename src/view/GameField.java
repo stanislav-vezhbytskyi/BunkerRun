@@ -38,7 +38,7 @@ public class GameField {
     private Rectangle strafeAmountLineStroke;
     private int levelWidth;
     private boolean isPlayerRunning = false;
-    private BotController botController = new BotController(1);
+    private BotController botController = new BotController(30);
     private AnimationTimer timer;
 
     private boolean isGameOnPause = false;
@@ -239,7 +239,7 @@ public class GameField {
     public void endGame(boolean isWin){
 
         if (isWin) {
-            ViewManager.getCoins().saveCoinsForVictory();
+            ViewManager.getCoins().saveCoinsForVictory(bunker.getBunkerHP(), player.getHP());
         } else {
             getCoins().resetCoinsForGame();
         }
@@ -252,6 +252,12 @@ public class GameField {
         Sounds.getInstance().stopRunning();
 
         timer.stop();
+
+        if (isWin) {
+            Sounds.getInstance().win();
+        } else {
+            Sounds.getInstance().notWin();
+        }
 
         PauseTransition delay = new PauseTransition(Duration.seconds(4));
         delay.setOnFinished(event -> {

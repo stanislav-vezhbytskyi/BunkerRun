@@ -32,6 +32,10 @@ public class Sounds {
     private MediaPlayer buttonPlayer = new MediaPlayer(buttonMedia);
     private Media attackMedia = new Media(new File("src/resources/epicWoosh.mp3").toURI().toString());
     private MediaPlayer attackPlayer = new MediaPlayer(attackMedia);
+    private Media winMedia = new Media(new File("src/resources/winSound.mp3").toURI().toString());
+    private MediaPlayer winPlayer = new MediaPlayer(winMedia);
+    private Media looseMedia = new Media(new File("src/resources/looseSound.mp3").toURI().toString());
+    private MediaPlayer loosePlayer = new MediaPlayer(looseMedia);
     private double currentVolume = 1;
 
     public void startRunning() {
@@ -60,6 +64,20 @@ public class Sounds {
         if (attackPlayer.getCurrentTime().greaterThan(new Duration(200)) || attackPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
             attackPlayer.stop();
             attackPlayer.play();
+        }
+    }
+
+    public void win() {
+        if (winPlayer.getCurrentTime().greaterThan(new Duration(200)) || winPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
+            winPlayer.stop();
+            winPlayer.play();
+        }
+    }
+
+    public void notWin() {
+        if (loosePlayer.getCurrentTime().greaterThan(new Duration(200)) || loosePlayer.getStatus() != MediaPlayer.Status.PLAYING) {
+            loosePlayer.stop();
+            loosePlayer.play();
         }
     }
 

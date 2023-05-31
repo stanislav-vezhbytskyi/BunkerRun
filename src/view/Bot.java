@@ -59,7 +59,6 @@ public class Bot extends Player{
             }
             if(currentImpactZone.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
                 bunker.setBunkerHP(bunker.getBunkerHP() - DAMAGE);
-                System.out.println(bunker.getBunkerHP());
             }
             paneForImpactZoneAnimation.setVisible(false);
         });

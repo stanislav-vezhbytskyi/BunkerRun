@@ -52,8 +52,8 @@ public class Coins {
             e.printStackTrace();
         }
     }
-    public void saveCoinsForVictory() {
-        totalCoins += coinsForGame;
+    public void saveCoinsForVictory(double aBaseHP, double aHP) {
+        totalCoins += coinsForGame * aHP * aBaseHP / 50000;
         coinsForGame = 0;
         saveCoinsToFile();
     }

@@ -35,6 +35,7 @@ public class ViewManager {
     private Store storeManager;
     private BackgroundMusic backgroundMusic;
     private Settings settings = new Settings();
+    private Contacts contacts = new Contacts();
     private Mode mode;
 
     public ViewManager() {
@@ -79,7 +80,7 @@ public class ViewManager {
             getGameManager().stopGame();
             gameManager = null;
         }
-        if (mode != Mode.STORE && mode != Mode.SETTINGS) {
+        if (mode != Mode.STORE && mode != Mode.SETTINGS && mode != Mode.CONTACTS) {
             BackgroundMusic.getInstance().startSong("src/resources/song1.mp3");
         }
         mainStage.setScene(mainMenu.getScene());
@@ -91,6 +92,10 @@ public class ViewManager {
         mainStage.setScene(settings.getSettingsScene());
     }
 
+    public void goToContacts() {
+        mode = Mode.CONTACTS;
+        mainStage.setScene(contacts.getScene());
+    }
 
     public Stage getMainStage() {
         return mainStage;
