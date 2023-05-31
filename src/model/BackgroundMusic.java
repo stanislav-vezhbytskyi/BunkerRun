@@ -45,4 +45,7 @@ public class BackgroundMusic {
         mediaPlayer.stop();
     }
 
+    public double getCurrentVolume() {
+        return currentVolume;
+    }
 }

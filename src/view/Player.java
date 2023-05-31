@@ -104,6 +104,7 @@ public class Player extends Pane {
 
     public void performAttack(ArrayList<Bot> botArrayList){
         if(canAttack()){
+            Sounds.getInstance().attack();
             attack(botArrayList);
         }
     }

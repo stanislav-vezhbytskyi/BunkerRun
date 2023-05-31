@@ -39,6 +39,7 @@ public class Settings {
         createBackground();
         createButtons();
         createSliders();
+        createInfo();
     }
 
     private void createBackground() {
@@ -90,7 +91,7 @@ public class Settings {
         settingsPane.getChildren().add(backButton);
     }
 
-    public void createSliders() {
+    private void createSliders() {
         musicLabel = new Label("Фонова музика");
         musicLabel.setLayoutX(80);
         musicLabel.setLayoutY(200);
@@ -100,7 +101,7 @@ public class Settings {
         musicVolumeSlider = new Slider();
         musicVolumeSlider.setLayoutX(80);
         musicVolumeSlider.setLayoutY(250);
-        musicVolumeSlider.setValue(100);
+        musicVolumeSlider.setValue(BackgroundMusic.getInstance().getCurrentVolume() * 100);
         musicVolumeSlider.setPrefWidth(350);
 
         settingsPane.getChildren().add(musicVolumeSlider);
@@ -119,7 +120,7 @@ public class Settings {
         soundsVolumeSlider = new Slider();
         soundsVolumeSlider.setLayoutX(80);
         soundsVolumeSlider.setLayoutY(350);
-        soundsVolumeSlider.setValue(100);
+        soundsVolumeSlider.setValue(Sounds.getInstance().getCurrentVolume() * 100);
         soundsVolumeSlider.setPrefWidth(350);
         settingsPane.getChildren().add(soundsVolumeSlider);
         soundsVolumeSlider.valueProperty().addListener(new InvalidationListener() {
@@ -128,6 +129,27 @@ public class Settings {
                 Sounds.getInstance().setVolume(soundsVolumeSlider.getValue()/100);
             }
         });
+    }
+
+    private void createInfo() {
+        Label info = new Label("""
+                Керування:
+                Біг ліворуч - A
+                Біг праворуч - D
+                Швидкий біг - Shift + A, Shift + D
+                Стрибок - W
+                Удар - K
+                Відкрити меню паузи - Space""");
+        info.setLayoutX(500);
+        info.setLayoutY(200);
+        info.setTextFill(Color.WHITESMOKE);
+        info.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 32));
+        settingsPane.getChildren().add(info);
+    }
+
+    public void updateVolume() {
+        musicVolumeSlider.setValue(BackgroundMusic.getInstance().getCurrentVolume() * 100);
+        soundsVolumeSlider.setValue(Sounds.getInstance().getCurrentVolume() * 100);
     }
 
     public Scene getSettingsScene() {

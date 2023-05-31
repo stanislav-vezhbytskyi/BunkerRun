@@ -51,7 +51,7 @@ public class GameField {
 
     private void initGame() {
         ViewManager.getInstance().setMode(Mode.GAME);
-        BackgroundMusic.getInstance().startSong("src/music/songForFighting.mp3");
+        BackgroundMusic.getInstance().startSong("src/resources/songForFighting.mp3");
 
         gameScene = new Scene(appRoot,WIDTH,HEIGHT);
 
@@ -116,6 +116,7 @@ public class GameField {
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Sounds.getInstance().clickButtonSound();
                 openPauseMenu(ViewManager.getInstance().getGameManager());
                 isGameOnPause = true;
             }

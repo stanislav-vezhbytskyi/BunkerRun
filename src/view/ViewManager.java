@@ -34,7 +34,6 @@ public class ViewManager {
     private GameField gameManager;
     private Store storeManager;
     private BackgroundMusic backgroundMusic;
-
     private Settings settings = new Settings();
     private Mode mode;
 
@@ -81,13 +80,14 @@ public class ViewManager {
             gameManager = null;
         }
         if (mode != Mode.STORE && mode != Mode.SETTINGS) {
-            BackgroundMusic.getInstance().startSong("src/music/song1.mp3");
+            BackgroundMusic.getInstance().startSong("src/resources/song1.mp3");
         }
         mainStage.setScene(mainMenu.getScene());
     }
 
     public void goToSettings() {
         mode = Mode.SETTINGS;
+        settings.updateVolume();
         mainStage.setScene(settings.getSettingsScene());
     }
 
