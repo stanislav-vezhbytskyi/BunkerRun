@@ -30,11 +30,13 @@ public class MainMenu {
     private StackPane contentPane;
 
     public MainMenu() {
+        // Start the background music
         BackgroundMusic.getInstance().startSong("src/resources/song1.mp3");
         BackgroundMusic.getInstance().play();
 
         menuPane = new Pane();
 
+        // Create and style the label
         Label label = new Label("Project 2023");
         label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
         label.setTextFill(Color.WHITE);
@@ -55,9 +57,11 @@ public class MainMenu {
             public void run() {
                 Media media2 = new Media(MainMenu.class.getResource("/resources/movingBackground.mp4").toExternalForm());
 
+                // Create and configure the media player for the moving background video
                 MediaPlayer mediaPlayer2 = new MediaPlayer(media2);
                 mediaPlayer2.setCycleCount(MediaPlayer.INDEFINITE);
 
+                // Create and style the second label
                 Label label2 = new Label("Project 2023");
                 label2.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
                 label2.setTextFill(Color.WHITE);
@@ -69,6 +73,7 @@ public class MainMenu {
                 mediaView2.setFitWidth(WIDTH);
                 mediaView2.setFitHeight(HEIGHT);
 
+                // Add the second video and label to the menu pane
                 menuPane.getChildren().addAll(mediaView2);
                 menuPane.getChildren().add(label2);
                 createButtons();
@@ -87,12 +92,14 @@ public class MainMenu {
 
     }
 
+    // Create the background image for the menu pane
     private void createBackground() {
         Image backgroundImage = new Image("resources/Menu.jpg", 1200, 675, false, true);
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         menuPane.setBackground(new Background(background));
     }
 
+    // Create buttons and add them to the menu pane
     private void createButtons() {
         BunkerRunButton startButton = new BunkerRunButton("ПОЧАТИ ГРУ", 1);
         startButton.setLayoutX(395);
@@ -111,6 +118,7 @@ public class MainMenu {
             }
         });
 
+        // Create and configure the store button
         BunkerRunButton storeButton = new BunkerRunButton("МАГАЗИН", 0);
         storeButton.setLayoutX(395);
         storeButton.setLayoutY(295);
@@ -126,6 +134,7 @@ public class MainMenu {
             }
         });
 
+        // Create and configure the settings button
         BunkerRunButton settingsButton = new BunkerRunButton("НАЛАШТУВАННЯ", 0);
         settingsButton.setLayoutX(395);
         settingsButton.setLayoutY(370);
@@ -142,6 +151,7 @@ public class MainMenu {
             }
         });
 
+        // Create and configure the contacts button
         BunkerRunButton aboutButton = new BunkerRunButton("ЗВ'ЯЗОК", 0);
         aboutButton.setLayoutX(395);
         aboutButton.setLayoutY(445);
@@ -155,6 +165,7 @@ public class MainMenu {
             }
         });
 
+        // Create and configure the exit button
         BunkerRunButton exitButton = new BunkerRunButton("ВИЙТИ", 2);
         exitButton.setLayoutX(395);
         exitButton.setLayoutY(520);

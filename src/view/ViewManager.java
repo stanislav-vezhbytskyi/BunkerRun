@@ -10,6 +10,7 @@ import model.Coins;
 public class ViewManager {
     private static ViewManager instance;
 
+    // Singleton pattern to ensure only one instance of ViewManager exists
     public static ViewManager getInstance() {
         if (instance == null) {
             instance = new ViewManager();
@@ -19,6 +20,7 @@ public class ViewManager {
 
     private static Coins coins;
 
+    // Get the Coins instance, creating it if it doesn't exist
     public static Coins getCoins() {
         if (coins == null)
             coins = new Coins();
@@ -38,6 +40,7 @@ public class ViewManager {
     private Contacts contacts = new Contacts();
     private Mode mode;
 
+    // ViewManager constructor initializes mainStage and sets the mainScene to the mainMenu scene
     public ViewManager() {
         mainPane = new AnchorPane();
         mainScene = mainMenu.getScene();
@@ -48,6 +51,7 @@ public class ViewManager {
         mainStage.setTitle("Bunker Run");
     }
 
+    // Get the GameManager instance, creating it if it doesn't exist
     public GameField getGameManager() {
         if (gameManager == null) {
             gameManager = new GameField();
@@ -55,24 +59,28 @@ public class ViewManager {
         return gameManager;
     }
 
+    // Get the Store instance, creating it if it doesn't exist
     public Store getStoreManager() {
         storeManager = new Store();
         return storeManager;
     }
 
+    // Set the current mode
     public void setMode(Mode aMode) {
         mode = aMode;
     }
 
+    // Get the current mode
     public Mode getMode() {
         return mode;
     }
 
-
+    // Set the mainScene of the mainStage
     public void setMainScene(Scene aScene) {
         mainStage.setScene(aScene);
     }
 
+    // Switch to the main menu scene, stopping sounds and game if in game mode
     public void switchToMainMenu() {
         Sounds.getInstance().stopSounds();
 
@@ -86,17 +94,20 @@ public class ViewManager {
         mainStage.setScene(mainMenu.getScene());
     }
 
+    // Switch to the settings scene
     public void goToSettings() {
         mode = Mode.SETTINGS;
         settings.updateVolume();
         mainStage.setScene(settings.getSettingsScene());
     }
 
+    // Switch to the contacts scene
     public void goToContacts() {
         mode = Mode.CONTACTS;
         mainStage.setScene(contacts.getScene());
     }
 
+    // Get the mainStage
     public Stage getMainStage() {
         return mainStage;
     }

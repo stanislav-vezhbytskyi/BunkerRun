@@ -49,23 +49,29 @@ public class GameField {
         initGame();
     }
 
+    // Initialize the game by setting up the scene, background music, and creating game objects.
     private void initGame() {
         ViewManager.getInstance().setMode(Mode.GAME);
         BackgroundMusic.getInstance().startSong("src/resources/songForFighting.mp3");
 
         gameScene = new Scene(appRoot,WIDTH,HEIGHT);
 
+        // Set up the game background image
         ImageView backgroundIV = new ImageView(new Image("Background+bunker.png"));
 
 
+        // Calculate the level width based on the level data
         levelWidth = LevelData.LEVEL1[0].length() * BLOCK_SIZE;
+        // Generate all the platforms/blocks for the game level
         platforms = Platform.generateAllBlocks(gameRoot);
 
+        // Create the player object with the chosen skin and initial properties
         String urlSkin = SkinService.getPickedSkinSprite();
         player = new Player(urlSkin, "Damage-pers.png",0, 0,40,
                 10,5,0.15,100,400,4);
         player.setTranslateY(0);
         player.setTranslateX(0);
+        // Update the game root's position when the player moves
         player.translateXProperty().addListener((obs, old, newValue) -> {
             int offset = newValue.intValue();
             if (offset > 640 && offset < levelWidth - 640) {
@@ -74,6 +80,7 @@ public class GameField {
             }
         });
 
+        // Create the bunker object with its dimensions and health properties
         bunker = new Bunker(500,10,10,250,20);
         bunker.getStrokeLineHP().setStrokeWidth(1);
         bunker.getStrokeLineHP().setStroke(Color.BLACK);
@@ -81,6 +88,7 @@ public class GameField {
         bunker.getLineHP().setFill(Color.BLUE);
 
 
+        // Create the player's health line and its stroke for display
         playerHealthLine = new Rectangle(bunker.getLineHP().getX()+bunker.getLineHP().getWidth(), 10, 2 * player.getHP(), 20);
         playerHealthLine.setFill(Color.RED);
 
@@ -94,6 +102,7 @@ public class GameField {
         HealthLine.setFill(Color.RED);
 
 
+        // Create the amount line for strafing (sideways movement)
         strafeAmountLine = new Rectangle(10, bunker.getLineHP().getY()+bunker.getLineHP().getHeight(),
                 2 * player.getStrafeAmount(), 10);
         strafeAmountLine.setFill(Color.YELLOW);
@@ -105,6 +114,7 @@ public class GameField {
         strafeAmountLineStroke.setFill(Color.TRANSPARENT);
 
 
+        // Create a button for pausing the game
         Image image = new Image("img_2.png");
         ImageView imageView = new ImageView(image);
 
@@ -122,14 +132,17 @@ public class GameField {
             }
         });
 
+        // Add UI elements to the UI root
         uiRoot.getChildren().add(pauseButton);
         uiRoot.getChildren().addAll(bunker.getLineHP(),bunker.getStrokeLineHP());
         uiRoot.getChildren().addAll(playerHealthLine,playerHealthLineStroke);
         uiRoot.getChildren().addAll(strafeAmountLine,strafeAmountLineStroke);
 
+        // Add game objects to the game root
         gameRoot.getChildren().addAll(player,player.getImpactZone());
         appRoot.getChildren().addAll(backgroundIV,gameRoot, uiRoot);
 
+        // Set up keyboard input handlers
         gameScene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         gameScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
         timer = new AnimationTimer() {
@@ -143,13 +156,16 @@ public class GameField {
         timer.start();
     }
 
+    // Update the game state
     private void update() {
 
+        // Update the bot controller and other game elements
         botController.updateBot(gameRoot,player,bunker);
         updatePlayerHealthLine();
         updateStrafeAmountLine();
         player.updateStrafe();
         bunker.updateLineHP();
+        // Check for game over conditions
         if(botController.botsAreOver()){
             endGame(true);
         }
@@ -157,6 +173,7 @@ public class GameField {
             endGame(false);
         }
 
+        // Handle player movement and actions based on keyboard input
         if (isPressed(KeyCode.W) && player.getTranslateY() >= 5) {
             player.jump();
             player.spriteAnimation.setAnimation(2);
@@ -214,13 +231,16 @@ public class GameField {
         player.moveY((int) player.velocity.getY());
 
 
+        // Perform an attack if the attack key is pressed
         if(isPressed(KeyCode.K)) {
             player.performAttack(botController.getBotList());
         }
     }
+    // Update the player's health line based on their current health value
     public void updatePlayerHealthLine(){
         playerHealthLine.setWidth(2 * player.getHP());
     }
+    // Update the strafe amount line based on the player's strafe amount value
     public void updateStrafeAmountLine(){
         strafeAmountLine.setWidth(3 * player.getStrafeAmount());
     }
@@ -229,6 +249,7 @@ public class GameField {
         return keys.getOrDefault(key, false);
     }
 
+    // Start the game by setting the main scene
     public void startGame() {
         ViewManager.getInstance().setMainScene(gameScene);
     }
@@ -236,6 +257,7 @@ public class GameField {
     public void stopGame() {
         timer.stop();
     }
+    // End the game and handle win/lose conditions
     public void endGame(boolean isWin){
 
         if (isWin) {
@@ -244,6 +266,7 @@ public class GameField {
             getCoins().resetCoinsForGame();
         }
 
+        // Display the end game image and play appropriate sounds
         Image endGameImage = new Image(isWin?"win.png":"lose.png");
         ImageView endGameIV = new ImageView(endGameImage);
 
@@ -259,6 +282,7 @@ public class GameField {
             Sounds.getInstance().notWin();
         }
 
+        // Wait for a delay and then switch back to the main menu
         PauseTransition delay = new PauseTransition(Duration.seconds(4));
         delay.setOnFinished(event -> {
             BackgroundMusic.getInstance().stop();

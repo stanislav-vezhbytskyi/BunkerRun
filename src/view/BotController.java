@@ -20,10 +20,12 @@ public class BotController {
         this.numberOfBotsOnLevel = numberOfBotsOnLevel;
     }
 
+    // Check if all bots on the level are defeated
     public boolean botsAreOver(){
         return numberOfBotsOnLevel<=0;
     }
 
+    // Create a new bot and add it to the game pane
     private void createBot(Pane gameRoot) {
         if (botList.size() < MAX_BOT_NUMBER&&numberOfBotsOnLevel-botList.size()>0) {
             random = rand.nextInt(BOT_SPAWN_FREQUENCY);
@@ -38,6 +40,7 @@ public class BotController {
         }
     }
 
+    // Move the bots towards the player or away from the player depending on their position
     private void botMove(Player player, Bunker bunker) {
         botNumber = botList.size();
         for (int i = 0; i < botNumber; i++) {
@@ -46,6 +49,7 @@ public class BotController {
             double playerBotWidthDifference = Math.abs(player.getTranslateX() - bot.getTranslateX());
 
             if (bot.isBotRunning) {
+                // If the player is within the bot's viewing distance, move towards the player
                 if (playerBotHeightDifference <= 30 && playerBotWidthDifference <= bot.getViewingDistance()) {
                     boolean playerOnRight = player.getTranslateX() - bot.getTranslateX() > 0;
                     bot.moveX(playerOnRight);
@@ -54,6 +58,7 @@ public class BotController {
                     bot.spriteAnimation.play();
                 }
 
+                // If the player is outside the viewing distance, move away from the player
                 if (playerBotHeightDifference > 30 || playerBotWidthDifference > bot.getViewingDistance()) {
                     bot.moveX(false);
                     bot.isBotRunning = true;
@@ -61,20 +66,24 @@ public class BotController {
                     bot.spriteAnimation.play();
                 }
 
+                // If the bot intersects with the bunker area, stop and perform an attack
                 if(bot.getBoundsInParent().intersects(bunker.getBunkerArea().getBoundsInParent())){
                     bot.isBotRunning = false;
                     bot.performAttack(player,bunker);
                 }
             }
+            // If the player is within the bot's impact radius, stop moving
             if (playerBotHeightDifference <= 30 && ((isPlayerOnRight(player, bot) && player.getTranslateX() + player.SIZE / 2 - bot.getTranslateX() - bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS) || (!isPlayerOnRight(player, bot) && bot.getTranslateX() - player.getTranslateX() - player.SIZE / 2 + bot.SIZE / 2 <= bot.BOT_IMPACT_RADIUS))) {
                 bot.isBotRunning = false;
             } else if((bot.getTranslateX()>bunker.getBunkerArea().getWidth()-bot.getWidth())){
                 bot.isBotRunning = true;
             }
+            // Apply gravity to the bot's vertical movement
             if (bot.velocity.getY() < 6) {
                 bot.velocity = bot.velocity.add(0, 1);
             }
             //bot.moveY((int) bot.botVelocity.getY());
+            // If the bot is not running, perform an attack
             if (!bot.isBotRunning) {
                 bot.performAttack(player,bunker);
 
@@ -96,6 +105,7 @@ public class BotController {
     }
 
 
+    // Check if any bots are defeated and update the game state accordingly
     private void checkBotsAlive(Pane gameRoot, Player player) {
         Iterator<Bot> iterator = botList.iterator();
         while (iterator.hasNext()) {
@@ -106,6 +116,7 @@ public class BotController {
                 ViewManager.getCoins().addCoinsForKillingBot();
                 iterator.remove();
                 //
+                // Increase the player's strafe amount if it's below a certain threshold
                 if (player.getStrafeAmount() >= 75)
                     player.setStrafeAmount(100);
                 else {
@@ -118,9 +129,11 @@ public class BotController {
     public void updateBot(Pane gameRoot, Player player, Bunker bunker) {
         createBot(gameRoot);
 
+        // Update the bots' movements, check for defeated bots, and update health bar lines
         botMove(player,bunker);
         checkBotsAlive(gameRoot, player);
 
+        // Update the health bar lines for all bots
         updateHPLines();
     }
 

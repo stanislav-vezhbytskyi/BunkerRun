@@ -1,6 +1,5 @@
 package view;
 
-
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.ImageView;
@@ -26,16 +25,19 @@ public class SpriteAnimation extends Transition {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         setCycleDuration(duration);
-        imageView.setViewport(new Rectangle2D(offsetX,offsetY, width, height));
+        imageView.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
     }
 
+    // Method to set the current offset Y value based on the animation number
     public void setAnimation(int numbAnimation) {
-        this.currentOffsetY = offsetY + numbAnimation*(height+offsetY);
+        this.currentOffsetY = offsetY + numbAnimation * (height + offsetY);
     }
+
+    // Method that is called during the animation to update the frame
     protected void interpolate(double k) {
         int index = Math.min((int) Math.floor(k * count), count - 1);
-        int x = (index % columns) * (width + offsetX)+offsetX;
-        int y =  + currentOffsetY;
+        int x = (index % columns) * (width + offsetX) + offsetX;
+        int y = currentOffsetY;
         imageView.setViewport(new Rectangle2D(x, y, width, height));
     }
 }
